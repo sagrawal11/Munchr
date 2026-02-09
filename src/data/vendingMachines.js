@@ -492,7 +492,7 @@ export const vendingMachines = [
       building: 'Office of Undergraduate Admissions',
       floor: 'Outside',
       notes: "Facing campus drive",
-      products: ['Coca Cola', 'Diet Coke', 'Coke Zero', 'Sprite Water']
+      products: ['Coca Cola', 'Diet Coke', 'Coke Zero', 'Sprite', 'Water']
     },
     { 
       id: 56, 
