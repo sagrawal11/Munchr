@@ -69,7 +69,7 @@ export const vendingMachines = [
       building: 'Physics Building',
       floor: 'Bottom Floor',
       notes: 'Enter the building and go right, follow the hallway and go down the stairs, vending machine is around the corner',
-      products: ['Coca Cola', 'Diet Coke', 'Sprite', 'Dr. Pepper', 'Diet Dr. Pepper', 'Coke Zero', 'Schweppes Ginger Ale', 'Pepsi', 'Pepsi Zero Sugar', 'Cherry Pepsi', 'Starry', 'Water', 'Mountain Dew', 'Diet Mountain Dew', 'Baja Blast Mountain Dew', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Smartfood White Cheddar Popcorn', 'Doritos Cool Ranch', 'Cheetos', 'Funyuns', 'Ruffles Cheddar & Sour Cream', 'Mini Pretzels', 'Lays Barbeque', 'Lays Sour Cream & Onion', 'Bugles Nacho Cheese', 'Cheez It', "Miss Vickie's Spicy Dill Pickle Chips", 'Grilled Cheese Crackers', 'Skittles', 'Toasted Cheese Peanut Butter Crackers', 'Peanut Butter Crackers', 'Payday', "Reese's Peanut Butter Cups", 'Nutra Grain', 'Kinder Bueno', 'M&Ms', 'Ghirardelli Milk Chocolate Caramel', 'Snickers', 'Peanut M&Ms', 'KitKat', "Reese's Sticks", 'Butterfinger', 'Clif Bar Chocolate Chip', 'Skittles', "Reese's Fast Break", 'Nature Valley Granola Bar', 'Trolli Sour Gummy Worms', 'Big Honey Bun', 'Pop Tarts', 'Gushers']
+      products: ['Coca Cola', 'Diet Coke', 'Sprite', 'Dr. Pepper', 'Diet Dr. Pepper', 'Coke Zero', 'Schweppes Ginger Ale', 'Pepsi', 'Pepsi Zero Sugar', 'Cherry Pepsi', 'Starry', 'Water', 'Mountain Dew', 'Diet Mountain Dew', 'Baja Blast Mountain Dew', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Sun Chips Harvest Cheddar', 'Doritos Cool Ranch', 'Cheetos', 'Funyuns', 'Ruffles Cheddar & Sour Cream', 'Mini Pretzels', 'Lays Barbeque', 'Lays Sour Cream & Onion', 'Bugles Nacho Cheese', 'Cheez It', "Miss Vickie's Spicy Dill Pickle Chips", 'Grilled Cheese Crackers', 'Gushers', 'Toasted Cheese Peanut Butter Crackers', 'Peanut Butter Crackers', 'Payday', "Reese's Peanut Butter Cups", 'Nutra Grain', 'Kinder Bueno', 'M&Ms', 'Ghirardelli Milk Chocolate Caramel', 'Snickers', 'Peanut M&Ms', 'KitKat', "Reese's Sticks", 'Butterfinger', 'Clif Bar Chocolate Chip', 'Sour Gushers', "Reese's Fast Break", 'Nature Valley Granola Bar', 'Trolli Sour Gummy Worms', 'Big Honey Bun', 'Pop Tarts']
     },
     { 
       id: 9, 
@@ -321,7 +321,7 @@ export const vendingMachines = [
       building: 'Biological Sciences Building',
       floor: '2nd Floor',
       notes: "Doesn't take food points or apple pay, only takes cash or physical card swipe.",
-      products: ['Coke Zero', 'Coca Cola', 'Sprite', 'Lemonade', 'Water', 'Dr. Pepper', 'Diet Dr. Pepper', 'Schweppes Ginger Ale', 'Water'] 
+      products: ['Coke Zero', 'Coca Cola', 'Sprite', 'Mellow Yellow', 'Dr. Pepper', 'Diet Dr. Pepper', 'Lemonade', 'Water'] 
     },
     { 
       id: 37, 
