@@ -203,7 +203,7 @@ export const vendingMachines = [
       location: [36.003589, -78.938715], 
       building: 'Tel-Com Building',
       floor: '1st Floor',
-      notes: "Enter from the door across from Wilkinson and take a right",
+      notes: "Enter from the main door, go to the right and go all the way down the hallway. It'll be on your left behind a door with a vending machine sign",
       products: ['Coca Cola', 'Coke Zero', 'Sprite', 'Mellow Yellow', 'Dr. Pepper', 'Diet Dr. Pepper', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Ruffles Cheddar & Sour Cream', 'Sun Chips Harvest Cheddar', 'Doritos Cool Ranch', 'Cheetos', "Chester's Flamin Hot Fries", 'Cheez It', 'Grilled Cheese Crackers', 'Gushers', 'Toasted Cheese Peanut Butter Crackers', 'Peanut Butter Crackers', 'Trail Mix', "Reese's Peanut Butter Cups", 'Nutra Grain', 'Snickers', 'Peanut M&Ms', 'KitKat', 'Butterfinger', 'Rice Krispies Treats', 'Nature Valley Almond Butter Biscuits', 'Crunch', 'Mini Gummy Worms', 'Mini Cookies', 'Beef Tender Bites'] 
     },
     { 
@@ -366,7 +366,7 @@ export const vendingMachines = [
       building: 'Fuqua School of Business',
       floor: 'Basement',
       notes: "From main entrance go down a floor, first alcove on the left",
-      products: ['Coca Cola', 'Diet Coke', 'Coke Zero Sugar', 'Sprite', 'Dr. Pepper', 'Diet Dr. Pepper', 'Monster', 'Lays Classic', 'Cheetos', 'Doritos Nacho Cheese', 'Fritos Twists', 'Funyuns', 'Bugles Nacho Cheese', 'Doritos Cool Ranch', 'Ruffles Cheddar & Sour Cream', "Zapp's Voodoo Potato Chips", 'Lays Salt & Vinegar', 'Lays Sour Cream & Onion', 'Cheez It', 'Peanut Butter Crackers', 'Grilled Cheese Crackers', 'Oreos', 'Toasted Cheese Peanut Butter Crackers', 'Trail Mix', 'KitKat', "Reese's Peanut Butter Cups", "Reese's Sticks", 'Snickers', 'Peanut M&Ms', 'Kinder Bueno', "Reese's Fast Break", 'Gushers', "Hershey's Chocolate Bar", 'Nature Valley Almond Butter Biscuits', 'Rice Krispies Treats', 'Sour Skittles Gummies', 'Pringles', 'Nerds Gummy Clusters', 'Big Honey Bun', 'Starbucks Vanilla Frappuccino', 'Starbucks Mocha Cappuccino', 'Starbucks Caramel Cappuccino', 'Starbucks Oatmilk Frappuccino', 'Celsius', 'Grape Juice', 'Bubly', 'Schweppes Ginger Ale', 'Apple Juice', 'Storm', 'Topo Chico', 'Water']
+      products: ['Coca Cola', 'Diet Coke', 'Coke Zero', 'Sprite', 'Dr. Pepper', 'Diet Dr. Pepper', 'Monster', 'Lays Classic', 'Cheetos', 'Doritos Nacho Cheese', 'Fritos Twists', 'Funyuns', 'Bugles Nacho Cheese', 'Doritos Cool Ranch', 'Ruffles Cheddar & Sour Cream', "Zapp's Voodoo Potato Chips", 'Lays Salt & Vinegar', 'Lays Sour Cream & Onion', 'Cheez It', 'Peanut Butter Crackers', 'Grilled Cheese Crackers', 'Oreos', 'Toasted Cheese Peanut Butter Crackers', 'Trail Mix', 'KitKat', "Reese's Peanut Butter Cups", "Reese's Sticks", 'Snickers', 'Peanut M&Ms', 'Kinder Bueno', "Reese's Fast Break", 'Gushers', "Hershey's Chocolate Bar", 'Nature Valley Almond Butter Biscuits', 'Rice Krispies Treats', 'Sour Skittles Gummies', 'Pringles', 'Nerds Gummy Clusters', 'Big Honey Bun', 'Starbucks Vanilla Frappuccino', 'Starbucks Mocha Cappuccino', 'Starbucks Caramel Cappuccino', 'Starbucks Oatmilk Frappuccino', 'Celsius', 'Grape Juice', 'Bubly', 'Schweppes Ginger Ale', 'Apple Juice', 'Storm', 'Topo Chico', 'Water']
     },
     { 
       id: 42, 
