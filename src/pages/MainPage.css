@@ -546,6 +546,23 @@
   flex: 1;
 }
 
+.result-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.credit-card-only-badge {
+  background: #dc2626;
+  color: white;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .distance-badge {
   background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
   color: white;

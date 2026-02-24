@@ -44,6 +44,17 @@
   margin-bottom: 0.2rem;
 }
 
+.vm-machine-card-credit-card-only {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  background: #dc2626;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-bottom: 0.25rem;
+}
+
 .vm-machine-card-floor {
   font-size: 0.97rem;
   color: #2563eb;

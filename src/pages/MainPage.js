@@ -350,7 +350,7 @@ function MainPage() {
 
   // Define which buildings are on which campus
   const campusBuildings = {
-    west: ['LSRC', 'Physics', 'Teer', 'Wilkinson', 'Rueben Cooke', 'Social Sciences', 'Allen', 'Perkins', 'Wu', 'BC', 'Flowers', 'Few', 'Wilson Recreation Center', 'Craven', 'Wannamaker', 'Crowell', 'Kilgo', 'Fitzpatrick', 'Keohane'],
+    west: ['LSRC', 'Physics', 'Teer', 'Wilkinson', 'Rueben Cooke', 'Social Sciences', 'Allen', 'Perkins', 'Wu', 'BC', 'Flowers', 'Few', 'Wilson Recreation Center', 'Craven', 'Wannamaker', 'Crowell', 'Kilgo', 'Fitzpatrick', 'Keohane', 'Arts Annex', 'Rubenstein Arts Center'],
     east: ['Pegram', 'Bassett', 'Brown', 'Alspaugh', 'Giles', 'Wilson Residence', 'West House', 'Eastern Union', 'West Duke', 'Brodie', 'Blackwell', 'Randolph', 'Bell Tower', 'Trinity', 'Southgate', 'Gilbert Addoms', 'Classroom', 'Biddle', 'Friedl']
   };
   
@@ -623,6 +623,9 @@ function MainPage() {
               <span className="inline-back-chevron">&#8249;</span>
             </button>
             <span className="inline-machine-name">{inlineMachineProducts.machine.name}</span>
+            {inlineMachineProducts.machine.creditCardOnly && (
+              <span className="credit-card-only-badge">Credit card only</span>
+            )}
           </div>
           {products.length === 0 ? (
             <div style={{ color: '#64748b', textAlign: 'center', margin: '2rem 0' }}>
@@ -673,6 +676,9 @@ function MainPage() {
                 <span className="inline-back-chevron">&#8249;</span>
               </button>
               <span className="inline-machine-name">{machine.name}</span>
+              {machine.creditCardOnly && (
+                <span className="credit-card-only-badge">Credit card only</span>
+              )}
             </div>
             {renderGroupedProductList(machine)}
           </div>
@@ -702,11 +708,16 @@ function MainPage() {
               <div className="result-content">
                 <div className="result-header">
                   <h4>{result.machine.name}</h4>
-                  {result.distance !== undefined && (
-                    <span className="distance-badge">
-                      {formatDistance(result.distance)}
-                    </span>
-                  )}
+                  <div className="result-badges">
+                    {result.machine.creditCardOnly && (
+                      <span className="credit-card-only-badge">Credit card only</span>
+                    )}
+                    {result.distance !== undefined && (
+                      <span className="distance-badge">
+                        {formatDistance(result.distance)}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <p><strong>Location:</strong> {result.machine.building}, {result.machine.floor}</p>
                 <p><strong>Notes:</strong> {result.machine.notes}</p>
@@ -854,6 +865,9 @@ function MainPage() {
                       style={{ cursor: 'pointer' }}
                     >
                       <h3>{machine.name}</h3>
+                      {machine.creditCardOnly && (
+                        <p className="credit-card-only-badge">Credit card only</p>
+                      )}
                       <p><strong>Building:</strong> {machine.building}</p>
                       <p><strong>Floor:</strong> {machine.floor}</p>
                       <p><strong>Notes:</strong> {machine.notes}</p>

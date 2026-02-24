@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from './pages/MainPage';
-import FreeFoodPage from './pages/FreeFoodPage';
 import logoImage from './munchrlogo.png';
 import './App.css';
 
@@ -29,7 +28,6 @@ function App() {
         
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/free-food" element={<FreeFoodPage />} />
         </Routes>
       </div>
     </Router>

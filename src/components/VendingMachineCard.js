@@ -12,6 +12,9 @@ const VendingMachineCard = ({ machine, onClick }) => {
       />
       <div className="vm-machine-card-info">
         <div className="vm-machine-card-name">{machine.name}</div>
+        {machine.creditCardOnly && (
+          <div className="vm-machine-card-credit-card-only">Credit card only</div>
+        )}
         <div className="vm-machine-card-floor">{machine.floor}</div>
         {machine.notes && <div className="vm-machine-card-notes">{machine.notes}</div>}
       </div>

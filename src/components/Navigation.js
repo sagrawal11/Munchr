@@ -13,13 +13,6 @@ const Navigation = () => {
       >
         🥤 Vending Machines
       </Link>
-      {/* Free Food tab hidden - keeping code for future use */}
-      {/* <Link 
-        to="/free-food"
-        className={`tab ${location.pathname === '/free-food' ? 'active' : ''}`}
-      >
-        🍕 Free Food
-      </Link> */}
     </div>
   );
 };

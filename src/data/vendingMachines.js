@@ -32,6 +32,7 @@ export const vendingMachines = [
       location: [36.003349, -78.937840], 
       building: 'Wilkinson',
       floor: 'Bottom Floor',
+      creditCardOnly: true,
       notes: 'Straight down the stairs, behind the study booths on the left side',
       products: ['Pepsi', 'Pepsi Zero Sugar', 'Starry', 'Mountain Dew', 'Water', 'Propel', 'Celsius', 'Starbucks Strawberry Acai', 'Starbucks Mocha Cappuccino', 'Starbucks Caramel Cappuccino', 'Apple Juice', 'Lays Classic', 'Cheetos', 'Doritos Nacho Cheese', 'Fritos Twists', 'Lays Salt & Vinegar', 'Funyuns', 'Gardettos Snack Mix', 'Doritos Cool Ranch', 'Ruffles Cheddar & Sour Cream', 'Sun Chips Garden Salsa', 'Tubs Bar-B-Que Pork Rinds', "Miss Vickie's Spicy Dill Pickle Chips", 'Cheetos Cheddar Jalapeno', 'Cheez It', 'Sun Chips Harvest Cheddar', 'Peanut Butter Crackers', 'Grilled Cheese Crackers', 'Oreos', 'Toasted Cheese Peanut Butter Crackers', "Reese's Sticks", 'Nature Valley Peanut Butter Granola Bar', "Reese's Fast Break", "Reese's Peanut Butter Cups", 'KitKat', 'Snickers', 'Peanut M&Ms', 'Twix', '3 Muskateers', 'Skittles', 'Kinder Bueno', 'Butterfinger', 'Nature Valley Almond Butter Biscuits', 'Haribo Gummy Bears', 'Trail Mix', 'Gushers', 'Pringles', 'Classic Cookie', 'Big Honey Bun', 'Mini Cookies']
     }, 
@@ -563,7 +564,18 @@ export const vendingMachines = [
       location: [36.000246, -78.929479], 
       building: 'Rubenstein Arts Center',
       floor: '1st Floor',
+      creditCardOnly: true,
       notes: "Take a right when you first enter and walk down the hall, it'll be on your right across from the bathrooms",
       products: ['Popchips Sea Salt', 'Popchips Sea Salt & Vinegar', 'Cheez It', 'Lays Sour Cream & Onion', 'Smartfood White Cheddar Popcorn', 'Sun Chips Harvest Cheddar', 'Cheetos', 'Gardettos Snack Mix', "Chester's Flamin Hot Fries", 'Doritos Nacho Cheese', 'Mini Pretzels', 'Doritos Spicy Sweet Chili', 'Lemon Creme Crackers', 'Peanut Butter Crackers', 'Grilled Cheese Crackers', 'Gatorade Protein Bar', 'Nutra Grain', 'Ghirardelli Milk Chocolate Caramel', 'Snickers', 'Peanut M&Ms', 'KitKat', "Reese's Sticks", 'Gushers', 'Pop Tarts', "Reese's Peanut Butter Cups", 'Beef Tender Bites', 'Sour Skittles Gummies', 'Goldfish', 'Diet Coke', 'Storm', 'Dr. Pepper', 'Diet Dr. Pepper', 'Coca Cola', 'Sprite', 'Mellow Yellow', 'Vitamin Water', 'Orange Juice', 'Monster', 'Water', 'Starry', 'Pepsi Zero Sugar', 'Starbucks Strawberry Acai', 'Apple Juice', 'Rockstar', 'Celsius', 'Starbucks Vanilla Frappuccino', 'Starbucks Mocha Frappuccino', 'Starbucks Coffee Frappuccino']
+    },
+    {
+      id: 64,
+      name: 'Arts Annex Vending Machine',
+      location: [35.99965913746111, -78.91872757409845],
+      building: 'Arts Annex',
+      floor: '1st Floor',
+      creditCardOnly: true,
+      notes: 'In the Arts Annex building',
+      products: []
     }
   ];
