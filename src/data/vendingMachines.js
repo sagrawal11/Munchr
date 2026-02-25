@@ -124,7 +124,7 @@ export const vendingMachines = [
       building: 'Bell Tower Residence Hall',
       floor: 'First Floor',
       notes: 'Enter on right side and go down the hall',
-      products: ['Coca Cola', 'Vitamin Water', 'Sprite', 'Dr. Pepper', 'Seagrams Ginger Ale', 'Water', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Sun Chips Harvest Cheddar', 'Lays Barbeque', 'Doritos Cool Ranch', 'Smartfood White Cheddar Popcorn', 'Fritos Original', 'Ruffles Cheddar & Sour Cream', 'Mini Pretzels', 'Pop Tarts', 'Gardettos Snack Mix', 'Cheez It', "Miss Vickie's Spicy Dill Pickle Chips", 'Peanut Butter Crackers', 'Skittles', 'Toasted Cheese Peanut Butter Crackers', 'Nature Valley Almond Butter Biscuits', "Reese's Peanut Butter Cups", 'Airheads Bites', 'Kinder Bueno', 'M&Ms', 'Trail Mix', 'Snickers', 'Peanut M&Ms', 'KitKat', 'Clif Bar Chocolate Chip', 'Haribo Gummy Bears', 'Rice Krispies Treats', 'Crunch', 'Gatorade Protein Bar', '3 Muskateers', "Hershey's Chocolate Bar", 'Nerds Gummy Clusters', 'Big Honey Bun', 'Sour Skittles Gummies', 'Gushers', 'Beef Tender Bites'] 
+      products: ['Coca Cola', 'Vitamin Water', 'Sprite', 'Dr. Pepper', 'Seagrams Ginger Ale', 'Water', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Sun Chips Harvest Cheddar', 'Lays Barbeque', 'Doritos Cool Ranch', 'Smartfood White Cheddar Popcorn', 'Fritos Original', 'Ruffles Cheddar & Sour Cream', 'Mini Pretzels', 'Pop Tarts', "Chester's Flamin Hot Fries", 'Gardettos Snack Mix', 'Cheez It',  'Peanut Butter Crackers', 'Gushers', 'Toasted Cheese Peanut Butter Crackers', 'Nature Valley Almond Butter Biscuits', "Reese's Peanut Butter Cups", 'Slim Jim', 'Kinder Bueno', 'Peanut M&Ms', 'Trail Mix', 'Snickers', 'KitKat', 'Gatorade Protein Bar', 'Haribo Gummy Bears', 'Rice Krispies Treats', 'Crunch', "Reese's Fast Break", "Hershey's Chocolate Bar", 'Nerds Gummy Clusters', 'Trolli Sour Gummy Worms', 'Sour Skittles Gummies', 'Beef Tender Bites'] 
     },
     { 
       id: 15, 
@@ -241,7 +241,7 @@ export const vendingMachines = [
       building: 'Alspaugh Residence Hall',
       floor: 'Main Floor',
       notes: "In its own little corner in the main hallway",
-      products: ['Water', 'Powerade', 'Vitamin Water', 'Coca Cola', 'Sprite', 'Coke Zero', 'Dr. Pepper', 'Diet Coke', 'Seagrams Ginger Ale', 'Snack vending machine was empty when I checked :('] 
+      products: ['Water', 'Powerade', 'Vitamin Water', 'Coca Cola', 'Sprite', 'Coke Zero', 'Dr. Pepper', 'Diet Coke', 'Seagrams Ginger Ale', 'Lays Classic', 'Fritos Twists', 'Doritos Nacho Cheese', 'Smartfood White Cheddar Popcorn', 'Cheetos', 'Sun Chips Harvest Cheddar', 'Fritos Original', 'Ruffles Cheddar & Sour Cream', "Chester's Flamin Hot Fries", 'Doritos Cool Ranch', 'Gardettos Snack Mix', 'Peanut Butter Crackers', "Gushers", "Toasted Cheese Peanut Butter Crackers", "Reese's Peanut Butter Cups", 'Peanut M&Ms', 'Sour Patch Kids', "Reese's Sticks", 'Trail Mix', "Ghirardelli Milk Chocolate Caramel", 'Crunch', 'Gatorade Protein Bar', "KitKat", 'Nature Valley Granola Bar', "Reese's Fast Break", "Trolli Sour Gummy Worms", "Mike&Ike", 'Sour Skittles Gummies', 'Beef Tender Bites', 'Black Forest Fruit Snacks'] 
     },
     { 
       id: 28, 
@@ -304,7 +304,7 @@ export const vendingMachines = [
       building: 'Brodie Recreation Center',
       floor: 'Main Floor',
       notes: "Near the squash court",
-      products: ['Water', 'Powerade', 'Gatorade'] 
+      products: ['Gatorade', "Gatorlyte", "Propel", 'Spylt', 'Water', 'Powerade', 'Body Armor', 'Vitamin Water', 'Veggie Straws Zesty Ranch', 'Popchips Sour Cream & Onion', 'Popcorners Kettle Corn', 'Popchips BBQ', 'Bugles Nacho Cheese', 'Sun Chips Harvest Cheddar', 'Popchips Sea Salt', 'Chicken Salad and Crackers', 'Goldfish', 'Mini Pretzels', 'Trail Mix', 'Gatorade Protein Bar', 'Pistachios', 'Think! Protein Bar', 'Cheez It'] 
     },
     { 
       id: 35, 
