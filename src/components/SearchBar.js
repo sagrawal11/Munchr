@@ -42,7 +42,7 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev < suggestions.length - 1 ? prev + 1 : prev
         );
         break;
@@ -119,7 +119,7 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
           Search
         </button>
       </form>
-      
+
       {showSuggestions && suggestions.length > 0 && (
         <div className="suggestions-container" ref={suggestionsRef}>
           <ul className="suggestions-list">
@@ -132,14 +132,14 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
               >
                 <div className="suggestion-content">
                   {suggestion.type === 'product' ? (
-                    <ProductImage 
-                      productName={suggestion.value} 
-                      size="small" 
+                    <ProductImage
+                      productName={suggestion.value}
+                      size="small"
                       className="suggestion-image"
                     />
                   ) : (
-                    <img 
-                      src={getBuildingImage(suggestion.value)} 
+                    <img
+                      src={getBuildingImage(suggestion.value)}
                       alt={suggestion.value}
                       className="suggestion-image"
                       style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', background: '#e5e7eb' }}

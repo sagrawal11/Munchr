@@ -1,18 +1,17 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import './Navigation.css';
 
 const Navigation = () => {
-  const location = useLocation();
-  
+  const isActive = typeof window !== 'undefined' && window.location.pathname === '/';
+
   return (
     <div className="tab-navigation">
-      <Link 
-        to="/"
-        className={`tab ${location.pathname === '/' ? 'active' : ''}`}
+      <a
+        href="/"
+        className={`tab ${isActive ? 'active' : ''}`}
       >
         🥤 Vending Machines
-      </Link>
+      </a>
     </div>
   );
 };

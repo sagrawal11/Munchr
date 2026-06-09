@@ -1,0 +1,68 @@
+.filter-chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.75rem 0 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.filter-chip:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  transform: translateY(-1px);
+}
+
+.filter-chip--active {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.filter-chip--active:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  border-color: transparent;
+}
+
+@media (max-width: 480px) {
+  .filter-chips {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  
+  .filter-chip {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}

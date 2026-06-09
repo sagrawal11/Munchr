@@ -12,9 +12,9 @@ function App() {
         <div className="hero-section">
           <div className="container">
             <div className="hero-logo">
-              <img 
-                src={logoImage} 
-                alt="Munchr Logo" 
+              <img
+                src={logoImage}
+                alt="Munchr Logo"
                 className="hero-logo-image clickable-logo"
                 onClick={() => window.location.href = '/'}
                 style={{ cursor: 'pointer' }}
@@ -25,7 +25,7 @@ function App() {
             </p>
           </div>
         </div>
-        
+
         <Routes>
           <Route path="/" element={<MainPage />} />
         </Routes>
