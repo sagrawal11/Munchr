@@ -56,6 +56,10 @@
 @media (min-width: 1024px) {
   .main-content {
     padding: 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
   }
 }
 
@@ -783,6 +787,14 @@
 .map-section {
   margin-top: 2rem;
   animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+@media (min-width: 1024px) {
+  .map-section {
+    margin-top: 0;
+    position: sticky;
+    top: 1.5rem;
+  }
 }
 
 /* Clickable popup styles */
