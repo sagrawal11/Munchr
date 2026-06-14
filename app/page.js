@@ -262,12 +262,13 @@ export default function MainPage() {
     setContentAnimKey(prev => prev + 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Track the search event
+    // Track the search event. building = top/nearest result's building (zone context).
     const normalized = normalizeProductName(term);
     if (filteredResults.length === 0) {
       track.noResults(term, campusFilter);
     } else {
-      track.search(term, normalized, filteredResults.length, campusFilter);
+      const topBuilding = filteredResults[0]?.machine?.building || null;
+      track.search(term, normalized, filteredResults.length, campusFilter, topBuilding);
     }
   };
 
@@ -453,7 +454,7 @@ export default function MainPage() {
               <div className="search-section">
                 <h2>Find Snacks & Drinks</h2>
                 <div className="search-container">
-                  <SearchBar onSearch={handleSearch} inputRef={searchInputRef} clearTrigger={clearTrigger} />
+                  <SearchBar onSearch={handleSearch} inputRef={searchInputRef} clearTrigger={clearTrigger} campus={campusFilter} />
                   <div className="campus-filter">
                     <select value={campusFilter} onChange={e => handleCampusFilterChange(e.target.value)} className="campus-select">
                       <option value="both">Both Campuses</option>

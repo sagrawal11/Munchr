@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getSuggestions } from '../utils/productUtils';
 import { getProductLabel } from '../data/productCategories';
+import { track } from '../../lib/analytics';
 import ProductImage from './ProductImage';
 import { getBuildingImage } from '../utils/productImages';
 import './SearchBar.css';
 
-function SearchBar({ onSearch, inputRef, clearTrigger }) {
+function SearchBar({ onSearch, inputRef, clearTrigger, campus = null }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -54,7 +55,7 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
       case 'Enter':
         e.preventDefault();
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          selectSuggestion(suggestions[selectedIndex].value);
+          selectSuggestion(suggestions[selectedIndex].value, suggestions[selectedIndex].type);
         } else {
           handleSubmit(e);
         }
@@ -86,7 +87,8 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
     }, 150);
   };
 
-  const selectSuggestion = (suggestion) => {
+  const selectSuggestion = (suggestion, type) => {
+    if (type === 'product') track.productClicked(suggestion, campus);
     setSearchTerm(suggestion);
     setShowSuggestions(false);
     setSelectedIndex(-1);
@@ -128,7 +130,7 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
               <li
                 key={suggestion.type + '-' + suggestion.value}
                 className={`suggestion-item ${index === selectedIndex ? 'selected' : ''}`}
-                onClick={() => selectSuggestion(suggestion.value)}
+                onClick={() => selectSuggestion(suggestion.value, suggestion.type)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="suggestion-content">

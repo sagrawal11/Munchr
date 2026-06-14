@@ -1,110 +1,114 @@
-# Duke Vending Machine Finder
+# Munchr
 
-## Overview
+**Campus vending search + demand intelligence.** Munchr helps Duke students find snacks and drinks across campus vending machines, and turns their search behavior into demand analytics for vending operators.
 
-People at Duke are hungry, this helps them find the munchies
+> The core insight: sales data shows what people *bought*. Munchr shows what people *wanted but couldn't find*.
 
-## Features
+Munchr is a two-sided product:
 
-### Location-Based Services
+- **Student app** (`/`) — a mobile-first map + search experience for finding vending machines and products.
+- **Operator console** (`/operator`) — an analytics dashboard and a printable **Demand Report** that quantifies product demand, unmet demand, and stocking recommendations.
 
-Interactive campus map showing all vending machine locations,
-geolocation support to find the nearest vending machines,
-distance calculations in miles/feet to each vending machine,
-map auto-focuses on search results and current location
+---
 
-### Smart Search
+## Architecture
 
-Search by product name (e.g., "Doritos", "Coca Cola"),
-search by building name or vending machine location.
-Gives detailed results including distance, location notes, and available products
+| Layer | Tech | Where |
+|---|---|---|
+| Framework | Next.js 15 (App Router) + React 19 | `app/` |
+| Map | Leaflet + react-leaflet | `src/components/VendingMap.js` (dynamic import, client-only) |
+| Database / Auth | Supabase (Postgres + Auth + RLS) | `lib/supabase.js`, `supabase/migrations/` |
+| Styling | Plain CSS modules per component + `app/globals.css` | — |
+| Tests | Vitest | `*.test.js` (node env) |
+| Hosting | Vercel | — |
 
-**Autocomplete Suggestions:** As you type, the search bar shows product suggestions to help you find what you're looking for quickly. Type "dor" to see all Doritos options, "coke" to find Coca Cola, or "hot cheetos" to find the spicy variety.
+### Routes
 
-**Product Images:** Visual product identification in autocomplete suggestions and search results for better user experience.
+- `app/page.js` — student app (search, map, nearest machine, campus filter).
+- `app/operator/page.js` — operator analytics dashboard (auth-gated).
+- `app/operator/report/page.js` — the **Demand Report** (printable one-pager).
+- `app/operator/login/page.js` — Supabase email/password login.
+- `app/api/track/route.js` — receives analytics events (service-role insert).
+- `app/api/machines/route.js` — public catalog read for the student app.
 
-**Keyboard Navigation:** Use arrow keys to navigate suggestions, Enter to select, and Escape to close.
+---
 
-### Product Organization
+## Data model (Supabase)
 
-Products categorized into groups:
+Two migrations, both in `supabase/migrations/`. Apply them in the Supabase **SQL Editor** (the CLI is not required).
 
-Healthy Snacks
-<br>
-Energy/Electrolyte Drinks
-<br>
-Drinks
-<br>
-Chips & Savory Snacks
-<br>
-Candy & Sweets
-<br>
-Other Snacks
+**`20260609000109_initial_schema.sql` — analytics**
+- `analytics_events` — every tracked student action. RLS: anon insert, authenticated (operator) read. See [docs/analytics-events.md](docs/analytics-events.md).
 
-Expandable/collapsible product categories in search results
-Product count per category
+**`20260614000000_catalog_schema.sql` — catalog**
+- `machines` — vending machines (id, name, building, floor, lat/lng, campus, credit_card_only, status).
+- `products` — master product catalog, deduped by name, with `category` (broad bucket) and `label` (concise type, e.g. "Energy Drink").
+- `machine_inventory` — which products are in which machine (`available`, `updated_at`). RLS on all three: public read, authenticated write.
 
-### User Interface
+The catalog is the **source of truth**; `src/data/vendingMachines.js` is now only an offline **fallback** used if the DB read fails.
 
-Clean, mobile-friendly design,
-building and floor information for each machine,
-detailed location notes to help find machines in buildings,
-map popups with machine details and product category summaries
+### Seeding / migrating the catalog
 
-## Setting Up Product Images
+`scripts/migrate-catalog.mjs` loads the static catalog into Supabase (idempotent upserts, computes `category`/`label`).
 
-To add product images to the autocomplete and search results:
-
-1. **Upload Images:** Place product images in `public/images/products/`
-2. **Naming Convention:** Use kebab-case (e.g., `doritos-nacho-cheese.jpg`)
-3. **Image Mapping:** Update `src/utils/productImages.js` with your image mappings
-4. **Supported Formats:** JPG, PNG, WebP
-5. **Recommended Size:** 200x200px for optimal performance
-
-### Example Image Setup:
-```
-public/images/products/
-├── doritos-nacho-cheese.jpg
-├── coca-cola.jpg
-├── snickers.jpg
-├── lays-classic.jpg
-└── default-product.jpg
+```bash
+node scripts/migrate-catalog.mjs --dry-run   # validate derivation, no DB writes
+node scripts/migrate-catalog.mjs             # upsert into Supabase (uses SERVICE_ROLE_KEY)
 ```
 
-## Technical Details
+⚠️ **Do not re-run the seed after editing inventory in the DB** — its upserts overwrite edits and do not delete removed rows. It is a one-time initial load.
 
-### Dependencies
+---
 
-React
-<br>
-React Leaflet (map component)
-<br>
-Leaflet (mapping library)
+## Analytics & the Demand Report
 
-### Key Components
+Student actions are tracked client-side via `lib/analytics.js` (`track.*`) → `POST /api/track` → `analytics_events`. Tracking **never throws** — a failed event is swallowed so it can't break the app. (Corollary: if the table is missing, tracking fails silently — verify the table exists.)
 
-MainPage: The main application container
-<br>
-SearchBar: Handles user input for searches with autocomplete functionality
-<br>
-ProductImage: Displays product images with loading states and fallbacks
-<br>
-MapContainer: The Leaflet map component
-<br>
-MapUpdater: Handles map bounds and view updates
-<br>
-UserLocationMarker: Shows the user's current location on the map
+The Demand Report (`lib/demandReport.js`) reads `analytics_events` + the catalog and computes:
+- Top searched products, unmet ("searched but not found") demand, and a transparent **estimated lost revenue** figure.
+- Building-level demand, by-hour demand, and rule-based stocking recommendations.
 
-### Key Functions
+Tunable assumptions (avg vend price, conversion rate) live in `REPORT_DEFAULTS` in `lib/demandReport.js`.
 
-calculateDistance: Uses the Haversine formula to calculate distances between coordinates
-<br>
-formatDistance: Formats distances in appropriate units (miles or feet)
-<br>
-categorizeProduct: Categorizes products into logical groups
-<br>
-groupProductsByCategory: Organizes products by their categories
-<br>
-getProductSuggestions: Provides autocomplete suggestions based on user input
-<br>
-getProductImage: Maps product names to their corresponding image files
+Full event catalog: **[docs/analytics-events.md](docs/analytics-events.md)**.
+
+---
+
+## Local development
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build
+npm test           # run the Vitest suite once
+npm run test:watch # watch mode
+```
+
+### Environment variables (`.env.local`)
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>      # client + public reads
+SUPABASE_SERVICE_ROLE_KEY=<service role key>  # server-only (API routes, seed script)
+```
+
+> ⚠️ Never expose `SUPABASE_SERVICE_ROLE_KEY` to the browser. It is used only in API routes and the seed script.
+
+---
+
+## Testing
+
+Vitest, node environment, pure-logic focused (no DB or browser needed):
+
+- `lib/demandReport.test.js` — report math (demand totals, unmet rate, lost-revenue estimate, recommendations, by-hour).
+- `src/data/productCategories.test.js` — `getProductLabel`, `categorizeProduct`, `groupProductsByCategory`.
+- `lib/catalog.test.js` — DB row → app machine shape mapping.
+- `lib/analytics.test.js` — `track.*` payloads (globals stubbed via `vi.stubGlobal`).
+
+---
+
+## Key conventions
+
+- **Don't run `npm run build` while `npm run dev` is running** — both write to `.next` and corrupt it. Stop dev first.
+- The catalog read path falls back to the static file, so the student app keeps working even if Supabase is unreachable.
+- Decisions of record live in [docs/adr/](docs/adr/).
