@@ -27,6 +27,7 @@ Munchr is a two-sided product:
 - `app/page.js` — student app (search, map, nearest machine, campus filter).
 - `app/operator/page.js` — operator analytics dashboard (auth-gated).
 - `app/operator/report/page.js` — the **Demand Report** (printable one-pager).
+- `app/operator/inventory/page.js` — the **inventory editor** (auth-gated CRUD: edit machines, add/remove products, toggle availability, add new machines).
 - `app/operator/login/page.js` — Supabase email/password login.
 - `app/api/track/route.js` — receives analytics events (service-role insert).
 - `app/api/machines/route.js` — public catalog read for the student app.
@@ -45,7 +46,7 @@ Two migrations, both in `supabase/migrations/`. Apply them in the Supabase **SQL
 - `products` — master product catalog, deduped by name, with `category` (broad bucket) and `label` (concise type, e.g. "Energy Drink").
 - `machine_inventory` — which products are in which machine (`available`, `updated_at`). RLS on all three: public read, authenticated write.
 
-The catalog is the **source of truth**; `src/data/vendingMachines.js` is now only an offline **fallback** used if the DB read fails.
+The catalog is the **source of truth**; `src/data/vendingMachines.js` is now only an offline **fallback** used if the DB read fails. Operators edit it live via the inventory editor (`/operator/inventory`); writes go through the session-authenticated client (RLS authenticated-write). Products toggled `available = false` are hidden from the student app (`mapMachineRow` filters them).
 
 ### Seeding / migrating the catalog
 
