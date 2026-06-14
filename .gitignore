@@ -103,7 +103,8 @@ dist
 
 # Gatsby files
 .cache/
-public
+# NOTE: do NOT ignore `public` — Next.js serves static assets (logo, images, favicon)
+# from public/, so it must be committed. (Removing the stray Gatsby `public` ignore.)
 
 # Storybook build outputs
 .out
