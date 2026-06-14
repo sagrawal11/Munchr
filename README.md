@@ -108,6 +108,14 @@ Vitest, node environment, pure-logic focused (no DB or browser needed):
 
 ---
 
+## Security
+
+Munchr collects **no student PII** (anonymous session IDs only), enforces database access with
+Supabase **row-level security**, validates all untrusted input, and ships hardened HTTP security
+headers (CSP, HSTS, X-Frame-Options, etc.). The full posture, threat model, and abuse-case test
+results are documented in `SECURITY.md` and the `security/` audit folder, which are kept **internal**
+(git-ignored) and available to partners on request. Re-verify with `npm test` and `npm audit`.
+
 ## Key conventions
 
 - **Don't run `npm run build` while `npm run dev` is running** — both write to `.next` and corrupt it. Stop dev first.

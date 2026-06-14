@@ -6,5 +6,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const machines = await fetchMachinesFromDb();
-  return Response.json({ machines });
+  // The catalog changes rarely; cache at the edge so a flood hits the CDN, not Supabase
+  // (amplification/cost mitigation). Inventory edits become visible within ~60s.
+  return Response.json(
+    { machines },
+    { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } }
+  );
 }

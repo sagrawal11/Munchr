@@ -19,7 +19,9 @@ export default function OperatorLogin() {
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {
-      setError(authError.message);
+      // Generic message — don't echo provider errors that can distinguish account states
+      // (account enumeration). Full detail is available in Supabase's auth logs.
+      setError('Invalid email or password.');
       setLoading(false);
     } else {
       router.push('/operator');

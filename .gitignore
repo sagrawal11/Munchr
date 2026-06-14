@@ -88,6 +88,12 @@ typings/
 .cache
 .parcel-cache
 
+# Security audit working docs — keep internal (reveal threat model / accepted risks)
+/security/
+AI-CHECKLIST.MD
+AI-CHECKLIST.md
+SECURITY.md
+
 # Next.js build output
 .next
 
