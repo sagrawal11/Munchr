@@ -115,6 +115,45 @@ export const categorizeProduct = (product) => {
     return 'Other Snacks';
   };
   
+  // Concise, user-facing type label for a single product (e.g. "Soda", "Energy Drink",
+  // "Chips"). Used for the tag shown next to each item. Order matters: more specific
+  // checks come before broader ones (e.g. "Diet Soda" before "Soda", "Chocolate" before
+  // "Nuts" so "Reese's Peanut Butter Cups" reads as Chocolate).
+  export const getProductLabel = (product) => {
+    const p = (product || '').toLowerCase();
+
+    // Protein/energy bars first, so "Gatorade Protein Bar" and "Clif Bar" aren't caught
+    // by the drink/chocolate rules below.
+    if (/protein bar|clif|think!?/.test(p)) return 'Protein Bar';
+
+    // --- Drinks ---
+    if (/zero sugar|zero|diet/.test(p) && /coke|cola|pepsi|dew|soda|starry|sprite|fanta|dr\.? pepper|mug/.test(p)) return 'Diet Soda';
+    if (/celsius|monster|red bull|bang|reign|rockstar|kickstart/.test(p)) return 'Energy Drink';
+    if (/fairlife|core power/.test(p)) return 'Protein Shake';
+    if (/gatorade|powerade|gatorlyte|body ?armor|propel|vitamin water/.test(p)) return 'Sports Drink';
+    if (/starbucks|cold brew|coffee|cappuccino|mocha|frappuccino|triple shot|double shot|espresso/.test(p)) return 'Coffee';
+    if (/sweet tea|pure leaf|gold peak|lipton|\btea\b/.test(p)) return 'Tea';
+    if (/juice|lemonade|fruit punch/.test(p)) return 'Juice';
+    if (/topo chico|sparkling|bubly|\bwater\b/.test(p)) return 'Water';
+    if (/pepsi|coca cola|\bcoke\b|mountain dew|\bdew\b|sprite|starry|fanta|dr\.? pepper|root beer|mug|storm|crush|cherry|cheerwine|mellow yellow|mello yello|ginger ale|sunkist|schweppes|seagrams/.test(p)) return 'Soda';
+
+    // --- Snacks ---
+    if (/lays|doritos|cheetos|fritos|pringles|ruffles|sun chips|funyuns|popchips|veggie straws|veggie toasted|bugles|pork rinds|chester|fries|zapp|\bchips\b/.test(p)) return 'Chips';
+    if (/popcorn|smartfood/.test(p)) return 'Popcorn';
+    if (/pretzel/.test(p)) return 'Pretzels';
+    if (/cheez ?it|goldfish|gold fish|crackers|chex mix|gardettos/.test(p)) return 'Crackers';
+    if (/oreo|cookie/.test(p)) return 'Cookies';
+    if (/gummy|gummies|haribo|skittles|nerds|gushers|mike ?& ?ike|mike and ike|trolli|sour patch|fruit snack|airhead|worm/.test(p)) return 'Gummies';
+    if (/snickers|kit ?kat|reese|twix|m& ?ms?|m and m|kinder|ghirardelli|butterfinger|hershey|crunch|payday|muskateers|chocolate/.test(p)) return 'Chocolate';
+    if (/nature valley|granola|nutra ?grain|nutri ?grain|rice krispies|biscuit/.test(p)) return 'Granola Bar';
+    if (/clif|protein bar/.test(p)) return 'Protein Bar';
+    if (/trail mix|cashew|pistachio|almond|peanut|\bnuts\b/.test(p)) return 'Nuts';
+    if (/slim jim|jerky|beef|tender bites/.test(p)) return 'Jerky';
+    if (/honey bun|pop ?-?tart|donut|muffin|pastry/.test(p)) return 'Pastry';
+
+    return 'Snack';
+  };
+
   // Group products by category
   export const groupProductsByCategory = (products) => {
     const grouped = {};

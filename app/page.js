@@ -3,12 +3,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import SearchBar from '../src/components/SearchBar';
-import FilterChips, { CHIP_OPTIONS } from '../src/components/FilterChips';
 import ProductImage from '../src/components/ProductImage';
 import Modal from '../src/components/Modal';
 import VendingMachineItemCard from '../src/components/VendingMachineItemCard';
 import VendingMachineCard from '../src/components/VendingMachineCard';
-import Navigation from '../src/components/Navigation';
 import { groupProductsByCategory } from '../src/data/productCategories';
 import { vendingMachines } from '../src/data/vendingMachines';
 import { calculateDistance } from '../src/utils/distance';
@@ -171,7 +169,8 @@ export default function MainPage() {
   const [inlineExpandedCategories, setInlineExpandedCategories] = useState({});
   const [contentAnimKey, setContentAnimKey] = useState(0);
   const [campusMismatchModal, setCampusMismatchModal] = useState({ open: false, campus: '', building: '', machines: [] });
-  const [activeChip, setActiveChip] = useState(null);
+  // Catalog: defaults to the static file, then swaps to live Supabase data once loaded.
+  const [machines, setMachines] = useState(vendingMachines);
 
   const getMachineCampus = React.useCallback((machine) => {
     if (campusBuildings.west.some(b => machine.building.includes(b))) return 'west';
@@ -184,7 +183,19 @@ export default function MainPage() {
     return machines.filter(m => getMachineCampus(m) === campusFilter);
   }, [campusFilter, getMachineCampus]);
 
-  const searchEngine = React.useMemo(() => new VendingMachineSearch(vendingMachines), []);
+  const searchEngine = React.useMemo(() => new VendingMachineSearch(machines), [machines]);
+
+  // Load the live catalog from Supabase; fall back to the static file on any failure.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/machines')
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (!cancelled && data?.machines?.length) setMachines(data.machines);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const getUserLocation = React.useCallback(() => {
     if (!navigator.geolocation) { alert('Geolocation is not supported by your browser'); return; }
@@ -269,7 +280,7 @@ export default function MainPage() {
       setSearchResults(filtered);
       setVisibleMachines(filtered.map(r => r.machine));
     } else {
-      setVisibleMachines(getFilteredMachines(vendingMachines));
+      setVisibleMachines(getFilteredMachines(machines));
     }
   };
 
@@ -277,73 +288,21 @@ export default function MainPage() {
     setSearchResults([]);
     setSearchPerformed(false);
     setSearchTerm('');
-    setVisibleMachines(getFilteredMachines(vendingMachines));
+    setVisibleMachines(getFilteredMachines(machines));
     setInlineMachineProducts(null);
-    setActiveChip(null);
     setClearTrigger(prev => prev + 1);
     setContentAnimKey(prev => prev + 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleChipClick = (chipId) => {
-    if (chipId === null) { setActiveChip(null); clearSearch(); return; }
-    setActiveChip(chipId);
-    const chipDef = CHIP_OPTIONS.find(c => c.id === chipId);
-    if (!chipDef) return;
-
-    track.categoryFilter(chipId, campusFilter);
-
-    if (chipDef.special === 'nearby' && userLocation) {
-      setInlineMachineProducts(null);
-      const allMachines = getFilteredMachines(vendingMachines);
-      const withDistances = allMachines.map(machine => ({
-        machine, products: machine.products, searchType: 'location', relevanceScore: 1,
-        distance: calculateDistance(userLocation.latitude, userLocation.longitude, machine.location[0], machine.location[1]),
-      }));
-      withDistances.sort((a, b) => a.distance - b.distance);
-      const top15 = withDistances.slice(0, 15);
-      setSearchResults(top15);
-      setSearchPerformed(true);
-      setSearchTerm('Nearby Machines');
-      setVisibleMachines(top15.map(r => r.machine));
-      setContentAnimKey(prev => prev + 1);
-      return;
-    }
-
-    if (chipDef.category) {
-      setInlineMachineProducts(null);
-      const allMachines = getFilteredMachines(vendingMachines);
-      const matchingResults = allMachines
-        .map(machine => {
-          const grouped = groupProductsByCategory(machine.products || []);
-          const categoryProducts = grouped[chipDef.category] || [];
-          if (categoryProducts.length === 0) return null;
-          return {
-            machine, products: categoryProducts, searchType: 'product', relevanceScore: categoryProducts.length,
-            distance: userLocation ? calculateDistance(userLocation.latitude, userLocation.longitude, machine.location[0], machine.location[1]) : undefined,
-          };
-        })
-        .filter(Boolean);
-
-      if (userLocation) matchingResults.sort((a, b) => a.distance - b.distance);
-      else matchingResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
-
-      setSearchResults(matchingResults);
-      setSearchPerformed(true);
-      setSearchTerm(chipDef.label.replace(/^[^\s]+\s/, ''));
-      setVisibleMachines(matchingResults.map(r => r.machine));
-      setContentAnimKey(prev => prev + 1);
-    }
-  };
-
   useEffect(() => {
-    const timer = setTimeout(() => setVisibleMachines(getFilteredMachines(vendingMachines)), 150);
+    const timer = setTimeout(() => setVisibleMachines(getFilteredMachines(machines)), 150);
     return () => clearTimeout(timer);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!searchPerformed) setVisibleMachines(getFilteredMachines(vendingMachines));
-  }, [campusFilter, searchPerformed]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!searchPerformed) setVisibleMachines(getFilteredMachines(machines));
+  }, [campusFilter, searchPerformed, machines]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMachineClick = (machine) => {
     setInlineMachineProducts({ machine });
@@ -488,7 +447,6 @@ export default function MainPage() {
   return (
     <div className="main-page">
       <div className="page-container">
-        <Navigation />
         <div className="content-container">
           <div className="container main-content">
             <div key={contentAnimKey} className="main-content-inner" style={{ animation: 'slideUp 0.6s ease-out' }}>
@@ -505,8 +463,6 @@ export default function MainPage() {
                   </div>
                   <button className="clear-button" onClick={clearSearch}>Reset</button>
                 </div>
-
-                <FilterChips activeChip={activeChip} onChipClick={handleChipClick} locationEnabled={locationPermission === 'granted'} />
 
                 <div className="location-section">
                   <button

@@ -130,6 +130,7 @@ export default function OperatorDashboard() {
               </button>
             ))}
           </div>
+          <button className="report-link-btn" onClick={() => router.push('/operator/report')}>📄 Demand Report</button>
           <button className="sign-out-btn" onClick={handleSignOut}>Sign Out</button>
         </div>
       </div>

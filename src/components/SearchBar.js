@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getSuggestions } from '../utils/productUtils';
+import { getProductLabel } from '../data/productCategories';
 import ProductImage from './ProductImage';
 import { getBuildingImage } from '../utils/productImages';
 import './SearchBar.css';
@@ -151,7 +152,7 @@ function SearchBar({ onSearch, inputRef, clearTrigger }) {
                       <span className="suggestion-alias"> ({suggestion.alias})</span>
                     ) : null}
                   </span>
-                  <span className="suggestion-type">{suggestion.type === 'building' ? 'Building' : 'Product'}</span>
+                  <span className="suggestion-type">{suggestion.type === 'building' ? 'Building' : getProductLabel(suggestion.value)}</span>
                 </div>
               </li>
             ))}

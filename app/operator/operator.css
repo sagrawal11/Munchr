@@ -79,6 +79,23 @@
   border-color: #d1d5db;
 }
 
+.report-link-btn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #001d4a, #00539B);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.report-link-btn:hover {
+  opacity: 0.9;
+}
+
 .stats-loading {
   text-align: center;
   padding: 4rem;
