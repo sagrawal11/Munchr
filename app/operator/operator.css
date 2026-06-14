@@ -258,6 +258,44 @@
   font-weight: 700;
 }
 
+/* Span a card across both grid columns */
+.analytics-card.span-2 { grid-column: 1 / -1; }
+
+/* Horizontal bar list */
+.bar-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.bar-row { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 0.6rem; }
+.bar-label {
+  font-size: 0.85rem; font-weight: 600; color: #1e293b;
+  text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bar-track { background: #f1f5f9; border-radius: 6px; height: 18px; overflow: hidden; }
+.bar-fill {
+  height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, #00539B, #1a5fb4);
+  transition: width 0.4s ease;
+}
+.bar-fill.alert { background: linear-gradient(90deg, #f59e0b, #f97316); }
+.bar-value { font-size: 0.8rem; font-weight: 700; color: #475569; white-space: nowrap; }
+.bar-value em { font-weight: 500; color: #94a3b8; font-style: normal; }
+
+/* Hour-of-day histogram */
+.hour-histogram {
+  display: flex; align-items: flex-end; gap: 3px;
+  height: 140px; padding-top: 0.5rem;
+}
+.hour-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; position: relative; }
+.hour-bar {
+  width: 100%; min-height: 2px; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #1a5fb4, #00539B);
+  transition: height 0.4s ease;
+}
+.hour-tick { font-size: 0.6rem; color: #94a3b8; margin-top: 3px; position: absolute; bottom: -16px; }
+.hour-histogram { margin-bottom: 1.25rem; }
+
+/* Recommendations */
+.reco-list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.reco-list li { font-size: 0.9rem; color: #1e293b; line-height: 1.4; }
+
 @media (max-width: 768px) {
   .operator-header {
     flex-direction: column;

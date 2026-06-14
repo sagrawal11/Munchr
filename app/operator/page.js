@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
+import { vendingMachines } from '../../src/data/vendingMachines';
+import { computeDemandReport } from '../../lib/demandReport';
+import { pct, hourLabel } from '../../lib/chartUtils';
 import './operator.css';
 
 const PERIODS = [
@@ -16,100 +19,43 @@ export default function OperatorDashboard() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState(14);
-  const [stats, setStats] = useState(null);
+  const [report, setReport] = useState(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [machines, setMachines] = useState(vendingMachines);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        router.replace('/operator/login');
-      } else {
-        setSession(session);
-        setLoading(false);
-      }
+      if (!session) router.replace('/operator/login');
+      else { setSession(session); setLoading(false); }
     });
   }, [router]);
 
+  // Live catalog (for unmet-demand cross-reference), static fallback.
   useEffect(() => {
-    if (!session) return;
-    fetchStats();
-  }, [session, period]); // eslint-disable-line react-hooks/exhaustive-deps
+    let cancelled = false;
+    fetch('/api/machines')
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => { if (!cancelled && data?.machines?.length) setMachines(data.machines); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setStatsLoading(true);
     const since = new Date(Date.now() - period * 24 * 60 * 60 * 1000).toISOString();
-
-    const { data: events, error } = await supabase
-      .from('analytics_events')
-      .select('*')
-      .gte('timestamp', since);
-
-    if (error) {
-      console.error('Error fetching analytics:', error);
-      setStatsLoading(false);
-      return;
-    }
-
-    const searches = events.filter(e => e.event_type === 'search_performed');
-    const noResults = events.filter(e => e.event_type === 'no_results_returned');
-    const machineClicks = events.filter(e => e.event_type === 'machine_clicked');
-    const directionsClicks = events.filter(e => e.event_type === 'directions_clicked');
-
-    // Top searched products
-    const queryCounts = {};
-    searches.forEach(e => {
-      if (e.query) queryCounts[e.query] = (queryCounts[e.query] || 0) + 1;
-    });
-    const topQueries = Object.entries(queryCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([query, count]) => ({ query, count }));
-
-    // No-result searches
-    const noResultCounts = {};
-    noResults.forEach(e => {
-      if (e.query) noResultCounts[e.query] = (noResultCounts[e.query] || 0) + 1;
-    });
-    const topNoResults = Object.entries(noResultCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([query, count]) => ({ query, count }));
-
-    // Top machines clicked
-    const machineCounts = {};
-    machineClicks.forEach(e => {
-      const key = e.building_id || e.machine_id || 'Unknown';
-      machineCounts[key] = (machineCounts[key] || 0) + 1;
-    });
-    const topMachines = Object.entries(machineCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([building, count]) => ({ building, count }));
-
-    // Unique sessions
-    const uniqueSessions = new Set(events.map(e => e.session_id)).size;
-
-    setStats({
-      totalSearches: searches.length,
-      totalMachineClicks: machineClicks.length,
-      totalDirectionsClicks: directionsClicks.length,
-      noResultSearches: noResults.length,
-      uniqueSessions,
-      topQueries,
-      topNoResults,
-      topMachines,
-    });
+    const { data: events, error } = await supabase.from('analytics_events').select('*').gte('timestamp', since);
+    if (error) { console.error('Error fetching analytics:', error); setStatsLoading(false); return; }
+    setReport(computeDemandReport(events || [], machines));
     setStatsLoading(false);
-  };
+  }, [period, machines]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/operator/login');
-  };
+  useEffect(() => { if (session) fetchStats(); }, [session, fetchStats]);
 
-  if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: '#64748b' }}>Loading...</div>;
-  }
+  const handleSignOut = async () => { await supabase.auth.signOut(); router.push('/operator/login'); };
+
+  if (loading) return <div className="stats-loading">Loading…</div>;
+
+  const h = report?.headline;
 
   return (
     <div className="operator-dashboard">
@@ -121,11 +67,7 @@ export default function OperatorDashboard() {
         <div className="operator-header-right">
           <div className="period-selector">
             {PERIODS.map(p => (
-              <button
-                key={p.value}
-                className={`period-btn ${period === p.value ? 'active' : ''}`}
-                onClick={() => setPeriod(p.value)}
-              >
+              <button key={p.value} className={`period-btn ${period === p.value ? 'active' : ''}`} onClick={() => setPeriod(p.value)}>
                 {p.label}
               </button>
             ))}
@@ -136,92 +78,59 @@ export default function OperatorDashboard() {
         </div>
       </div>
 
-      {statsLoading ? (
+      {statsLoading || !report ? (
         <div className="stats-loading">Loading analytics data...</div>
-      ) : stats ? (
+      ) : (
         <>
-          {/* Summary cards */}
           <div className="stats-grid">
-            <StatCard label="Total Searches" value={stats.totalSearches} icon="🔍" />
-            <StatCard label="Unique Sessions" value={stats.uniqueSessions} icon="👤" />
-            <StatCard label="Machine Views" value={stats.totalMachineClicks} icon="📍" />
-            <StatCard label="No-Result Searches" value={stats.noResultSearches} icon="⚠️" highlight={stats.noResultSearches > 0} />
+            <StatCard label="Est. Demand Lost" value={`$${h.estimatedLostRevenue.toLocaleString()}`} icon="💸" highlight={h.estimatedLostRevenue > 0} />
+            <StatCard label="Total Searches" value={h.totalSearches.toLocaleString()} icon="🔍" />
+            <StatCard label="Unique Sessions" value={h.uniqueSessions.toLocaleString()} icon="👤" />
+            <StatCard label="No-Result Rate" value={`${Math.round(h.noResultRate * 100)}%`} icon="⚠️" highlight={h.noResultRate > 0} />
           </div>
 
           <div className="analytics-grid">
-            {/* Top searches */}
             <div className="analytics-card">
               <h2>Top Product Searches</h2>
               <p className="card-subtitle">What students are looking for most</p>
-              {stats.topQueries.length === 0 ? (
-                <p className="empty-state">No searches recorded yet</p>
-              ) : (
-                <div className="ranked-list">
-                  {stats.topQueries.map((item, i) => (
-                    <div key={item.query} className="ranked-item">
-                      <span className="rank">#{i + 1}</span>
-                      <span className="ranked-label">{item.query}</span>
-                      <span className="ranked-count">{item.count} search{item.count !== 1 ? 'es' : ''}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <BarList items={report.topSearches.map(i => ({ label: i.product, value: i.count }))} emptyText="No searches recorded yet" />
             </div>
 
-            {/* Unmet demand */}
             <div className="analytics-card unmet-demand">
               <h2>Unmet Demand</h2>
-              <p className="card-subtitle">Searches that returned no results — lost opportunity</p>
-              {stats.topNoResults.length === 0 ? (
-                <p className="empty-state">No zero-result searches — great coverage!</p>
-              ) : (
-                <div className="ranked-list">
-                  {stats.topNoResults.map((item, i) => (
-                    <div key={item.query} className="ranked-item alert">
-                      <span className="rank">#{i + 1}</span>
-                      <span className="ranked-label">{item.query}</span>
-                      <span className="ranked-count">{item.count} missed</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <p className="card-subtitle">Searched but not found — lost opportunity</p>
+              <BarList
+                items={report.unmetProducts.map(i => ({ label: i.product, value: i.count, note: i.machinesStocking === 0 ? 'not stocked' : `in ${i.machinesStocking}` }))}
+                emptyText="No zero-result searches — great coverage!"
+                alert
+              />
             </div>
 
-            {/* Top machine views */}
             <div className="analytics-card">
-              <h2>Most Viewed Buildings</h2>
-              <p className="card-subtitle">Where students are looking for machines</p>
-              {stats.topMachines.length === 0 ? (
-                <p className="empty-state">No machine views recorded yet</p>
-              ) : (
-                <div className="ranked-list">
-                  {stats.topMachines.map((item, i) => (
-                    <div key={item.building} className="ranked-item">
-                      <span className="rank">#{i + 1}</span>
-                      <span className="ranked-label">{item.building}</span>
-                      <span className="ranked-count">{item.count} view{item.count !== 1 ? 's' : ''}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <h2>When Students Search</h2>
+              <p className="card-subtitle">Search volume by hour of day</p>
+              <HourHistogram byHour={report.byHour} />
             </div>
 
-            {/* No data yet callout */}
-            <div className="analytics-card callout">
-              <h2>Coming Soon</h2>
-              <p className="card-subtitle">More analytics as data accumulates</p>
-              <ul className="coming-soon-list">
-                <li>Searches by time of day</li>
-                <li>Campus-level demand breakdown</li>
-                <li>Seasonal trends</li>
-                <li>Product placement recommendations</li>
-                <li>Inventory freshness tracking</li>
-              </ul>
+            <div className="analytics-card">
+              <h2>Demand by Building</h2>
+              <p className="card-subtitle">Where students look for machines</p>
+              <BarList items={report.topBuildings.map(i => ({ label: i.building, value: i.count }))} emptyText="No machine views recorded yet" />
+            </div>
+
+            <div className="analytics-card callout span-2">
+              <h2>Recommended Actions</h2>
+              <p className="card-subtitle">Rule-based stocking suggestions from the data</p>
+              {report.recommendations.length === 0 ? (
+                <p className="empty-state">Not enough signal yet for confident recommendations.</p>
+              ) : (
+                <ul className="reco-list">
+                  {report.recommendations.map((r, i) => <li key={i}>{r.text}</li>)}
+                </ul>
+              )}
             </div>
           </div>
         </>
-      ) : (
-        <div style={{ textAlign: 'center', padding: '4rem', color: '#64748b' }}>Failed to load analytics data.</div>
       )}
     </div>
   );
@@ -231,8 +140,41 @@ function StatCard({ label, value, icon, highlight }) {
   return (
     <div className={`stat-card ${highlight ? 'highlight' : ''}`}>
       <span className="stat-icon">{icon}</span>
-      <span className="stat-value">{value?.toLocaleString() ?? '—'}</span>
+      <span className="stat-value">{value ?? '—'}</span>
       <span className="stat-label">{label}</span>
+    </div>
+  );
+}
+
+function BarList({ items, emptyText, alert }) {
+  if (!items || items.length === 0) return <p className="empty-state">{emptyText}</p>;
+  const max = Math.max(...items.map(i => i.value));
+  return (
+    <div className="bar-list">
+      {items.map((item, i) => (
+        <div key={item.label + i} className="bar-row">
+          <span className="bar-label" title={item.label}>{item.label}</span>
+          <div className="bar-track">
+            <div className={`bar-fill ${alert ? 'alert' : ''}`} style={{ width: `${pct(item.value, max)}%` }} />
+          </div>
+          <span className="bar-value">{item.value}{item.note ? <em> · {item.note}</em> : null}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HourHistogram({ byHour }) {
+  const max = Math.max(...byHour.map(b => b.count), 0);
+  if (max === 0) return <p className="empty-state">No search timing data yet</p>;
+  return (
+    <div className="hour-histogram">
+      {byHour.map(b => (
+        <div key={b.hour} className="hour-col" title={`${hourLabel(b.hour)}: ${b.count}`}>
+          <div className="hour-bar" style={{ height: `${pct(b.count, max)}%` }} />
+          {b.hour % 6 === 0 && <span className="hour-tick">{hourLabel(b.hour)}</span>}
+        </div>
+      ))}
     </div>
   );
 }

@@ -25,7 +25,7 @@ Munchr is a two-sided product:
 ### Routes
 
 - `app/page.js` — student app (search, map, nearest machine, campus filter).
-- `app/operator/page.js` — operator analytics dashboard (auth-gated).
+- `app/operator/page.js` — operator analytics dashboard (auth-gated). Uses `computeDemandReport` for all aggregation and renders dependency-free CSS/SVG charts (`lib/chartUtils.js`).
 - `app/operator/report/page.js` — the **Demand Report** (printable one-pager).
 - `app/operator/inventory/page.js` — the **inventory editor** (auth-gated CRUD: edit machines, add/remove products, toggle availability, add new machines).
 - `app/operator/login/page.js` — Supabase email/password login.
