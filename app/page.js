@@ -213,6 +213,16 @@ export default function MainPage() {
 
   const searchEngine = React.useMemo(() => new VendingMachineSearch(machines), [machines]);
 
+  // Record the visit source once per session (e.g. ?src=flyer from the QR code, else "direct").
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('munchr_opened')) return;
+      sessionStorage.setItem('munchr_opened', '1');
+      const src = new URLSearchParams(window.location.search).get('src') || 'direct';
+      track.appOpened(src);
+    } catch { /* sessionStorage unavailable — skip */ }
+  }, []);
+
   // Load the live catalog from Supabase; fall back to the static file on any failure.
   useEffect(() => {
     let cancelled = false;

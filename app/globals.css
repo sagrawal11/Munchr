@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+/* Quicksand is loaded via <link rel="preconnect"> + stylesheet in app/layout.js (not an
+   @import here) to avoid a render-blocking serialized font chain. */
 
 * {
   box-sizing: border-box;
@@ -40,8 +41,6 @@ body {
 
 .hero-section {
   background: linear-gradient(135deg, #001d4a, #003366, #00539B, #1a5fb4);
-  background-size: 300% 300%;
-  animation: dukeBlueGradient 15s ease-in-out infinite;
   color: white;
   padding: 2rem 0;
   text-align: center;

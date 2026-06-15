@@ -1,5 +1,4 @@
-/* Import a bubbly, friendly font with balanced stroke weights */
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+/* Quicksand font is loaded once in app/layout.js (preconnect + <link>), not via @import. */
 
 /* Global styles */
 .main-page {

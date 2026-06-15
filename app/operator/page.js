@@ -120,17 +120,15 @@ export default function OperatorDashboard() {
             </div>
 
             <div className="analytics-card span-2">
-              <h2>Conversion Funnel</h2>
-              <p className="card-subtitle">Search intent → machine interest → high-intent directions</p>
+              <h2>Engagement Funnel</h2>
+              <p className="card-subtitle">Search intent → machine interest (true conversion comes from sales via Integrations)</p>
               <div className="funnel">
                 <FunnelStep label="Searches" value={h.totalSearches} />
                 <span className="funnel-arrow">→</span>
                 <FunnelStep label="Machine Views" value={h.machineViews} />
-                <span className="funnel-arrow">→</span>
-                <FunnelStep label="Directions" value={h.directionsClicks} />
                 <div className="funnel-rate">
-                  <span className="funnel-rate-value">{Math.round((h.viewToDirectionsRate || 0) * 100)}%</span>
-                  <span className="funnel-rate-label">view → directions</span>
+                  <span className="funnel-rate-value">{h.totalSearches > 0 ? Math.round((h.machineViews / h.totalSearches) * 100) : 0}%</span>
+                  <span className="funnel-rate-label">search → view</span>
                 </div>
               </div>
             </div>

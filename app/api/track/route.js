@@ -13,6 +13,7 @@ const GLOBAL = { limit: 3000, windowMs: 60_000 };
 // authenticated). To limit data-poisoning and oversized-payload abuse we (a) allowlist
 // event types and (b) cap every field. Rate limiting is enforced at the edge (see SECURITY.md).
 const EVENT_TYPES = new Set([
+  'app_opened',
   'search_performed',
   'no_results_returned',
   'product_clicked',
