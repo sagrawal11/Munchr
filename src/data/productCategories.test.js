@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { categorizeProduct, getProductLabel, groupProductsByCategory } from './productCategories.js';
+import { categorizeProduct, getProductLabel, groupProductsByCategory, matchCategoryTerm, productMatchesCategory } from './productCategories.js';
 
 describe('getProductLabel', () => {
   const cases = [
@@ -57,6 +57,41 @@ describe('categorizeProduct', () => {
     expect(categorizeProduct('Doritos Nacho Cheese')).toBe('Chips & Savory Snacks');
     expect(categorizeProduct('Snickers')).toBe('Candy & Sweets');
     expect(categorizeProduct('Trail Mix')).toBe('Healthy Snacks');
+  });
+});
+
+describe('matchCategoryTerm', () => {
+  it('maps need-state phrases to labels', () => {
+    expect(matchCategoryTerm('energy drink')).toEqual({ labels: ['Energy Drink'] });
+    expect(matchCategoryTerm('chips')).toEqual({ labels: ['Chips'] });
+    expect(matchCategoryTerm('soda')).toEqual({ labels: ['Soda', 'Diet Soda'] });
+  });
+  it('maps to broad categories where appropriate', () => {
+    expect(matchCategoryTerm('healthy')).toEqual({ categories: ['Healthy Snacks'] });
+    expect(matchCategoryTerm('candy')).toEqual({ categories: ['Candy & Sweets'] });
+  });
+  it('is case/space insensitive', () => {
+    expect(matchCategoryTerm('  Energy Drink ')).toEqual({ labels: ['Energy Drink'] });
+  });
+  it('returns null for an unrecognized / brand query', () => {
+    expect(matchCategoryTerm('celsius')).toBeNull();
+    expect(matchCategoryTerm('')).toBeNull();
+  });
+});
+
+describe('productMatchesCategory', () => {
+  const energy = matchCategoryTerm('energy drink');
+  const healthy = matchCategoryTerm('healthy');
+  it('matches by label', () => {
+    expect(productMatchesCategory('Celsius', energy)).toBe(true);   // label Energy Drink
+    expect(productMatchesCategory('Coca Cola', energy)).toBe(false); // label Soda
+  });
+  it('matches by broad category', () => {
+    expect(productMatchesCategory('Trail Mix', healthy)).toBe(true); // Healthy Snacks
+    expect(productMatchesCategory('Snickers', healthy)).toBe(false);
+  });
+  it('returns false for a null match', () => {
+    expect(productMatchesCategory('Celsius', null)).toBe(false);
   });
 });
 

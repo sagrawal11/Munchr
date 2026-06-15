@@ -7,9 +7,11 @@ import ProductImage from '../src/components/ProductImage';
 import Modal from '../src/components/Modal';
 import VendingMachineItemCard from '../src/components/VendingMachineItemCard';
 import VendingMachineCard from '../src/components/VendingMachineCard';
-import { groupProductsByCategory } from '../src/data/productCategories';
+import { groupProductsByCategory, matchCategoryTerm, productMatchesCategory } from '../src/data/productCategories';
 import { vendingMachines } from '../src/data/vendingMachines';
 import { calculateDistance } from '../src/utils/distance';
+import { directionsUrl } from '../src/utils/directions';
+import { formatFreshness } from '../src/utils/freshness';
 import { track } from '../lib/analytics';
 import '../src/styles/MainPage.css';
 
@@ -103,9 +105,35 @@ class VendingMachineSearch {
   search(searchTerm, userLocation = null) {
     if (!searchTerm.trim()) return { results: [], searchType: 'empty' };
     const norm = normalizeProductName(searchTerm);
+    // Need-state / category search ("energy drink", "protein", "chips", "healthy")
+    // takes precedence over brand-name matching when the query is a recognized term.
+    const categoryMatch = matchCategoryTerm(searchTerm);
+    if (categoryMatch) {
+      const categoryResults = this.searchByCategory(categoryMatch, userLocation);
+      if (categoryResults.results.length > 0) return categoryResults;
+    }
     const productResults = this.searchByProduct(norm, userLocation);
     if (productResults.results.length > 0) return productResults;
     return this.searchByLocation(norm, userLocation);
+  }
+
+  searchByCategory(match, userLocation) {
+    const results = [];
+    this.machines.forEach(machine => {
+      const matchingProducts = machine.products.filter(p => productMatchesCategory(p, match));
+      if (matchingProducts.length > 0) {
+        results.push({ machine, products: matchingProducts, searchType: 'product', relevanceScore: matchingProducts.length });
+      }
+    });
+    if (userLocation) {
+      results.forEach(r => {
+        r.distance = calculateDistance(userLocation.latitude, userLocation.longitude, r.machine.location[0], r.machine.location[1]);
+      });
+      results.sort((a, b) => a.distance - b.distance);
+    } else {
+      results.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    }
+    return { results, searchType: 'product' };
   }
 
   searchByProduct(searchTerm, userLocation) {
@@ -311,6 +339,24 @@ export default function MainPage() {
     track.machineClicked(String(machine.id), machine.building, campusFilter);
   };
 
+  // High-intent conversion signal: fire directions_clicked, then open Maps.
+  const handleDirections = (machine) => {
+    track.directionsClicked(String(machine.id), machine.building);
+    if (typeof window !== 'undefined') {
+      window.open(directionsUrl(machine), '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  // Freshness label + Get Directions row, shown on a machine's detail view.
+  const renderMachineActions = (machine) => (
+    <div className="machine-actions">
+      <span className="freshness-label">{formatFreshness(machine.lastUpdated)}</span>
+      <button className="directions-btn" onClick={() => handleDirections(machine)}>
+        Get Directions
+      </button>
+    </div>
+  );
+
   const renderGroupedProductList = (machine) => {
     const grouped = groupProductsByCategory(machine.products || []);
     return (
@@ -356,6 +402,7 @@ export default function MainPage() {
               <span className="credit-card-only-badge">Credit card only</span>
             )}
           </div>
+          {renderMachineActions(inlineMachineProducts.machine)}
           {products.length === 0
             ? <div style={{ color: '#64748b', textAlign: 'center', margin: '2rem 0' }}>No products found for this machine.</div>
             : renderGroupedProductList(inlineMachineProducts.machine)
@@ -399,6 +446,7 @@ export default function MainPage() {
               <span className="inline-machine-name">{machine.name}</span>
               {machine.creditCardOnly && <span className="credit-card-only-badge">Credit card only</span>}
             </div>
+            {renderMachineActions(machine)}
             {renderGroupedProductList(machine)}
           </div>
         );
@@ -435,6 +483,12 @@ export default function MainPage() {
                     <p><strong>Found Products:</strong> {result.products.join(', ')}</p>
                   </div>
                 )}
+                <div className="machine-actions">
+                  <span className="freshness-label">{formatFreshness(result.machine.lastUpdated)}</span>
+                  <button className="directions-btn" onClick={() => handleDirections(result.machine)}>
+                    Get Directions
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -519,6 +573,7 @@ export default function MainPage() {
                   inlineMachine={inlineMachineProducts?.machine || null}
                   userLocation={userLocation}
                   onMachineClick={handleMachineClick}
+                  onDirections={handleDirections}
                 />
               </div>
             </div>

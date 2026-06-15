@@ -154,6 +154,67 @@ export const categorizeProduct = (product) => {
     return 'Snack';
   };
 
+  // ===== Category / need-state search =====
+  // Lets students search by need ("energy drink", "protein", "healthy", "chips")
+  // instead of an exact brand. Maps a normalized query to the product labels
+  // (getProductLabel) and/or broad categories (categorizeProduct) it should match.
+  const ALL_DRINK_LABELS = ['Soda', 'Diet Soda', 'Energy Drink', 'Sports Drink', 'Juice', 'Water', 'Tea', 'Coffee', 'Protein Shake'];
+  const ALL_SNACK_CATEGORIES = ['Chips & Savory Snacks', 'Candy & Sweets', 'Healthy Snacks', 'Other Snacks'];
+
+  const CATEGORY_SEARCH_TERMS = {
+    'energy drink': { labels: ['Energy Drink'] },
+    'energy drinks': { labels: ['Energy Drink'] },
+    'energy': { labels: ['Energy Drink'] },
+    'caffeine': { labels: ['Energy Drink', 'Coffee'] },
+    'coffee': { labels: ['Coffee'] },
+    'tea': { labels: ['Tea'] },
+    'soda': { labels: ['Soda', 'Diet Soda'] },
+    'pop': { labels: ['Soda', 'Diet Soda'] },
+    'diet soda': { labels: ['Diet Soda'] },
+    'juice': { labels: ['Juice'] },
+    'water': { labels: ['Water'] },
+    'sports drink': { labels: ['Sports Drink'] },
+    'sports drinks': { labels: ['Sports Drink'] },
+    'electrolyte': { labels: ['Sports Drink'] },
+    'drink': { labels: ALL_DRINK_LABELS },
+    'drinks': { labels: ALL_DRINK_LABELS },
+    'protein': { labels: ['Protein Bar', 'Protein Shake', 'Nuts'] },
+    'protein bar': { labels: ['Protein Bar'] },
+    'protein shake': { labels: ['Protein Shake'] },
+    'chips': { labels: ['Chips'] },
+    'candy': { categories: ['Candy & Sweets'] },
+    'chocolate': { labels: ['Chocolate'] },
+    'gummies': { labels: ['Gummies'] },
+    'gummy': { labels: ['Gummies'] },
+    'cookies': { labels: ['Cookies'] },
+    'cookie': { labels: ['Cookies'] },
+    'crackers': { labels: ['Crackers'] },
+    'popcorn': { labels: ['Popcorn'] },
+    'pretzels': { labels: ['Pretzels'] },
+    'nuts': { labels: ['Nuts'] },
+    'jerky': { labels: ['Jerky'] },
+    'healthy': { categories: ['Healthy Snacks'] },
+    'healthy snack': { categories: ['Healthy Snacks'] },
+    'healthy snacks': { categories: ['Healthy Snacks'] },
+    'snack': { categories: ALL_SNACK_CATEGORIES },
+    'snacks': { categories: ALL_SNACK_CATEGORIES },
+  };
+
+  // Returns { labels?, categories? } for a recognized need-state query, else null.
+  export const matchCategoryTerm = (query) => {
+    const q = (query || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    return CATEGORY_SEARCH_TERMS[q] || null;
+  };
+
+  // True if a product belongs to the matched category set (by label or broad category).
+  export const productMatchesCategory = (product, match) => {
+    if (!match) return false;
+    const label = getProductLabel(product);
+    const category = categorizeProduct(product);
+    return (!!match.labels && match.labels.includes(label)) ||
+           (!!match.categories && match.categories.includes(category));
+  };
+
   // Group products by category
   export const groupProductsByCategory = (products) => {
     const grouped = {};

@@ -296,6 +296,16 @@
 .reco-list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 .reco-list li { font-size: 0.9rem; color: #1e293b; line-height: 1.4; }
 
+/* Conversion funnel */
+.funnel { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.funnel-step { display: flex; flex-direction: column; align-items: center; background: #f8fafc; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 1rem 1.5rem; min-width: 110px; }
+.funnel-value { font-size: 1.6rem; font-weight: 700; color: #001d4a; line-height: 1; }
+.funnel-label { font-size: 0.78rem; color: #64748b; font-weight: 600; margin-top: 4px; }
+.funnel-arrow { color: #cbd5e1; font-size: 1.3rem; font-weight: 700; }
+.funnel-rate { margin-left: auto; display: flex; flex-direction: column; align-items: center; background: linear-gradient(135deg, #eff6ff, white); border: 1.5px solid #dbeafe; border-radius: 12px; padding: 1rem 1.5rem; }
+.funnel-rate-value { font-size: 1.6rem; font-weight: 700; color: #00539B; line-height: 1; }
+.funnel-rate-label { font-size: 0.72rem; color: #64748b; font-weight: 600; margin-top: 4px; }
+
 @media (max-width: 768px) {
   .operator-header {
     flex-direction: column;

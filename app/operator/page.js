@@ -118,6 +118,22 @@ export default function OperatorDashboard() {
               <BarList items={report.topBuildings.map(i => ({ label: i.building, value: i.count }))} emptyText="No machine views recorded yet" />
             </div>
 
+            <div className="analytics-card span-2">
+              <h2>Conversion Funnel</h2>
+              <p className="card-subtitle">Search intent → machine interest → high-intent directions</p>
+              <div className="funnel">
+                <FunnelStep label="Searches" value={h.totalSearches} />
+                <span className="funnel-arrow">→</span>
+                <FunnelStep label="Machine Views" value={h.machineViews} />
+                <span className="funnel-arrow">→</span>
+                <FunnelStep label="Directions" value={h.directionsClicks} />
+                <div className="funnel-rate">
+                  <span className="funnel-rate-value">{Math.round((h.viewToDirectionsRate || 0) * 100)}%</span>
+                  <span className="funnel-rate-label">view → directions</span>
+                </div>
+              </div>
+            </div>
+
             <div className="analytics-card callout span-2">
               <h2>Recommended Actions</h2>
               <p className="card-subtitle">Rule-based stocking suggestions from the data</p>
@@ -132,6 +148,15 @@ export default function OperatorDashboard() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function FunnelStep({ label, value }) {
+  return (
+    <div className="funnel-step">
+      <span className="funnel-value">{(value ?? 0).toLocaleString()}</span>
+      <span className="funnel-label">{label}</span>
     </div>
   );
 }

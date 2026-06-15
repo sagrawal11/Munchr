@@ -6,6 +6,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { calculateDistance } from '../utils/distance';
 import { groupProductsByCategory } from '../data/productCategories';
+import { formatFreshness } from '../utils/freshness';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -69,7 +70,7 @@ function CategorySummary({ products }) {
   );
 }
 
-export default function VendingMap({ visibleMachines, inlineMachine, userLocation, onMachineClick }) {
+export default function VendingMap({ visibleMachines, inlineMachine, userLocation, onMachineClick, onDirections }) {
   const dukeCenter = [36.0014, -78.9382];
   const markers = inlineMachine ? [inlineMachine] : visibleMachines;
 
@@ -106,6 +107,7 @@ export default function VendingMap({ visibleMachines, inlineMachine, userLocatio
                   calculateDistance(userLocation.latitude, userLocation.longitude, machine.location[0], machine.location[1])
                 )}</p>
               )}
+              <p className="popup-freshness">{formatFreshness(machine.lastUpdated)}</p>
               <div className="popup-products">
                 <p><strong>Available Categories:</strong></p>
                 <CategorySummary products={machine.products} />
@@ -113,6 +115,14 @@ export default function VendingMap({ visibleMachines, inlineMachine, userLocatio
               <div className="popup-click-hint">
                 <p><em>Click to view all products →</em></p>
               </div>
+              {onDirections && (
+                <button
+                  className="popup-directions-btn"
+                  onClick={(e) => { e.stopPropagation(); onDirections(machine); }}
+                >
+                  Get Directions
+                </button>
+              )}
             </div>
           </Popup>
         </Marker>
