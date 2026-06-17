@@ -19,6 +19,7 @@ const EVENT_TYPES = new Set([
   'product_clicked',
   'machine_clicked',
   'directions_clicked',
+  'product_requested',
   'category_filter_used',
   'building_filter_used',
   'location_permission_enabled',

@@ -75,6 +75,15 @@ export default function DemoDashboard() {
           />
         </div>
 
+        <div className="analytics-card requests-card">
+          <h2>Direct Requests</h2>
+          <p className="card-subtitle">Asked for via the on-machine QR — explicit demand</p>
+          <BarList
+            items={report.topRequests.map(i => ({ label: i.product, value: i.count, note: i.machinesStocking === 0 ? 'not stocked' : `in ${i.machinesStocking}` }))}
+            emptyText="No direct requests yet"
+          />
+        </div>
+
         <div className="analytics-card">
           <h2>When Students Search</h2>
           <p className="card-subtitle">Search volume by hour of day</p>

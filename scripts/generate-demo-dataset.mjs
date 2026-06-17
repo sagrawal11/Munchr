@@ -211,7 +211,14 @@ const pickSession = () => SESSIONS[randInt(0, SESSIONS.length - 1)];
 const pickDevice = () => (rand() < 0.8 ? 'mobile' : 'desktop');
 
 // ---- Generate ----
-const TARGETS = { search: 220 * SCALE, machine: 80 * SCALE, directions: 28 * SCALE, app: 30 * SCALE };
+const TARGETS = { search: 220 * SCALE, machine: 80 * SCALE, directions: 28 * SCALE, app: 30 * SCALE, request: 12 * SCALE };
+
+// What people explicitly request (via the on-machine QR) — skews to trendy off-catalog items.
+const REQUEST_ITEMS = [
+  { q: 'Prime', w: 8 }, { q: 'Alani', w: 7 }, { q: 'Takis', w: 5 }, { q: 'Red Bull', w: 4 },
+  { q: 'Liquid Death', w: 3 }, { q: 'Muscle Milk', w: 3 }, { q: 'Celsius', w: 4 },
+  { q: 'Gatorade', w: 3 }, { q: 'Kombucha', w: 2 }, { q: 'Bubly', w: 2 },
+];
 const events = [];
 
 for (let i = 0; i < TARGETS.search; i++) {
@@ -296,6 +303,25 @@ for (let i = 0; i < TARGETS.app; i++) {
   });
 }
 
+for (let i = 0; i < TARGETS.request; i++) {
+  const { iso } = sampleTimestamp();
+  const loc = pickWeighted(BUILDINGS);
+  const item = pickWeighted(REQUEST_ITEMS);
+  events.push({
+    event_type: 'product_requested',
+    session_id: pickSession(),
+    query: item.q,
+    normalized_query: item.q.toLowerCase(),
+    product_id: null,
+    machine_id: `demo-${randInt(1, 37)}`,
+    building_id: loc.b,
+    campus: loc.campus,
+    result_count: null,
+    device_type: pickDevice(),
+    timestamp: iso,
+  });
+}
+
 // Chronological order, like a real event stream.
 events.sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0));
 
@@ -322,6 +348,7 @@ console.log(`scale:            ${SCALE}x`);
 console.log(`total events:     ${events.length.toLocaleString()}`);
 console.log(`searches:         ${(searches.length + noResults.length).toLocaleString()} (found ${searches.length.toLocaleString()}, unmet ${noResults.length.toLocaleString()})`);
 console.log(`unique sessions:  ${sessions.toLocaleString()}`);
+console.log(`direct requests:  ${report.headline.totalRequests.toLocaleString()}`);
 console.log(`est demand lost:  $${report.headline.estimatedLostRevenue.toLocaleString()}`);
 
 const body =

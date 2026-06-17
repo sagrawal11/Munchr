@@ -21,6 +21,9 @@ export default function DemandReportPage() {
   const [period, setPeriod] = useState(30);
   const [report, setReport] = useState(null);
   const [reportLoading, setReportLoading] = useState(false);
+  const [events, setEvents] = useState(null);
+  // Account scope: 'all' fleet-wide, or a single building (for a per-account report).
+  const [building, setBuilding] = useState('all');
   // Catalog: static fallback, swapped for live Supabase data once loaded.
   const [machines, setMachines] = useState(vendingMachines);
 
@@ -48,13 +51,13 @@ export default function DemandReportPage() {
 
   useEffect(() => {
     if (!session) return;
-    fetchReport();
-  }, [session, period, machines]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchEvents();
+  }, [session, period]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchReport = async () => {
+  const fetchEvents = async () => {
     setReportLoading(true);
     const since = new Date(Date.now() - period * 24 * 60 * 60 * 1000).toISOString();
-    const { data: events, error } = await supabase
+    const { data, error } = await supabase
       .from('analytics_events')
       .select('*')
       .gte('timestamp', since);
@@ -64,15 +67,27 @@ export default function DemandReportPage() {
       setReportLoading(false);
       return;
     }
-    setReport(computeDemandReport(events || [], machines));
+    setEvents(data || []);
     setReportLoading(false);
   };
+
+  // Recompute whenever the events, account scope, or catalog change. Scoping to a building
+  // filters both the events (by building_id) and the catalog, so machinesStocking and the
+  // direct-requests list reflect that single account.
+  useEffect(() => {
+    if (!events) return;
+    const scopedEvents = building === 'all' ? events : events.filter(e => e.building_id === building);
+    const scopedMachines = building === 'all' ? machines : machines.filter(m => m.building === building);
+    setReport(computeDemandReport(scopedEvents, scopedMachines));
+  }, [events, building, machines]);
 
   if (loading) {
     return <div className="report-center">Loading…</div>;
   }
 
   const periodLabel = PERIODS.find(p => p.value === period)?.label || `${period} days`;
+  const buildings = [...new Set(machines.map(m => m.building).filter(Boolean))].sort();
+  const scopedMachineCount = building === 'all' ? machines.length : machines.filter(m => m.building === building).length;
 
   return (
     <div className="report-page">
@@ -90,21 +105,35 @@ export default function DemandReportPage() {
             </button>
           ))}
         </div>
+        <select
+          className="report-account-select"
+          value={building}
+          onChange={e => setBuilding(e.target.value)}
+          aria-label="Account / location scope"
+        >
+          <option value="all">All locations (fleet)</option>
+          {buildings.map(b => <option key={b} value={b}>{b}</option>)}
+        </select>
         <button className="report-print" onClick={() => window.print()}>Print / Save as PDF</button>
       </div>
 
       {reportLoading || !report ? (
         <div className="report-center">Building report…</div>
       ) : (
-        <ReportBody report={report} periodLabel={periodLabel} machineCount={machines.length} />
+        <ReportBody
+          report={report}
+          periodLabel={periodLabel}
+          machineCount={scopedMachineCount}
+          accountName={building === 'all' ? null : building}
+        />
       )}
     </div>
   );
 }
 
-function ReportBody({ report, periodLabel, machineCount }) {
-  const { headline, topSearches, unmetProducts, topBuildings, byHour, recommendations, config } = report;
-  const hasData = headline.totalSearches > 0;
+function ReportBody({ report, periodLabel, machineCount, accountName }) {
+  const { headline, topSearches, unmetProducts, topRequests, topBuildings, byHour, recommendations, config } = report;
+  const hasData = headline.totalSearches > 0 || headline.totalRequests > 0;
   const peakHour = byHour.reduce((a, b) => (b.count > a.count ? b : a), byHour[0]);
 
   return (
@@ -112,16 +141,17 @@ function ReportBody({ report, periodLabel, machineCount }) {
       {/* Header */}
       <header className="report-head">
         <div>
-          <h1>Duke Vending Demand Report</h1>
+          <h1>{accountName ? `${accountName} — Demand Report` : 'Duke Vending Demand Report'}</h1>
           <p className="report-meta">
-            Student search demand · last {periodLabel} · {machineCount} machines tracked
+            {accountName ? 'Account report' : 'Student search demand'} · last {periodLabel} ·{' '}
+            {machineCount} machine{machineCount !== 1 ? 's' : ''} {accountName ? 'at this location' : 'tracked'}
           </p>
         </div>
         <div className="report-brand">Munchr</div>
       </header>
 
       <p className="report-lede">
-        Sales data shows what students <em>bought</em>. This report shows what they <strong>searched for and couldn&apos;t find</strong> —
+        Sales data shows what people <em>bought</em>. This report shows what they <strong>searched for, requested, and couldn&apos;t find</strong> —
         unmet demand that walked away from the machines.
       </p>
 
@@ -138,6 +168,9 @@ function ReportBody({ report, periodLabel, machineCount }) {
             <Kpi value={headline.totalSearches.toLocaleString()} label="Student searches" />
             <Kpi value={headline.uniqueSessions.toLocaleString()} label="Unique students" />
             <Kpi value={`${Math.round(headline.noResultRate * 100)}%`} label="No-result rate" />
+            {headline.totalRequests > 0 && (
+              <Kpi value={headline.totalRequests.toLocaleString()} label="Direct requests" />
+            )}
           </div>
 
           <p className="report-formula">
@@ -166,6 +199,24 @@ function ReportBody({ report, periodLabel, machineCount }) {
                 </ol>
               )}
             </section>
+
+            {/* Direct requests — explicit "I want this" submissions via on-machine QR */}
+            {topRequests && topRequests.length > 0 && (
+              <section className="report-section highlight">
+                <h2>Directly requested</h2>
+                <ol className="report-list">
+                  {topRequests.map(item => (
+                    <li key={item.product}>
+                      <span className="ri-label">{item.product}</span>
+                      <span className="ri-count">
+                        {item.count} request{item.count !== 1 ? 's' : ''}
+                        {item.machinesStocking === 0 ? ' · not stocked' : ` · in ${item.machinesStocking}`}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
 
             {/* Top demand */}
             <section className="report-section">

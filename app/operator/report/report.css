@@ -43,6 +43,20 @@
   color: white;
 }
 
+.report-account-select {
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Quicksand', sans-serif;
+  cursor: pointer;
+  max-width: 240px;
+}
+.report-account-select:focus { outline: none; border-color: #00539B; }
+
 /* The printable sheet */
 .report-sheet {
   background: white;

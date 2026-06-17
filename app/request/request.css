@@ -1,0 +1,100 @@
+/* Mobile-first "request what you want" landing (QR target on a machine). */
+
+.req-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #eff6ff 0%, #f8fafc 100%);
+  font-family: 'Quicksand', sans-serif;
+}
+
+.req-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 18px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 8px 30px rgba(0, 29, 74, 0.1);
+  border: 1.5px solid #f1f5f9;
+}
+
+.req-brand {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #00539B;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.req-card h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #001d4a;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.req-sub {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0 0 1.5rem;
+}
+.req-sub strong { color: #001d4a; }
+
+.req-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1.05rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-family: 'Quicksand', sans-serif;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+.req-input:focus { outline: none; border-color: #00539B; box-shadow: 0 0 0 3px rgba(0, 83, 155, 0.12); }
+
+.req-submit {
+  width: 100%;
+  margin-top: 0.85rem;
+  padding: 0.9rem 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #001d4a, #00539B);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  transition: opacity 0.15s;
+}
+.req-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.req-submit:not(:disabled):hover { opacity: 0.92; }
+
+.req-privacy {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-align: center;
+  margin: 1rem 0 0;
+}
+
+/* Thank-you state */
+.req-done { text-align: center; padding: 0.5rem 0; }
+.req-check {
+  width: 54px; height: 54px; margin: 0 auto 1rem;
+  display: flex; align-items: center; justify-content: center;
+  background: #dcfce7; color: #16a34a; border-radius: 50%;
+  font-size: 1.6rem; font-weight: 800;
+}
+.req-done h1 { margin-bottom: 0.5rem; }
+.req-done p { font-size: 0.95rem; color: #64748b; line-height: 1.45; margin: 0 0 1.5rem; }
+.req-again {
+  padding: 0.7rem 1.25rem;
+  font-size: 0.95rem; font-weight: 700;
+  color: #00539B; background: white;
+  border: 1.5px solid #dbeafe; border-radius: 10px;
+  cursor: pointer; font-family: 'Quicksand', sans-serif;
+}
+.req-again:hover { background: #eff6ff; }

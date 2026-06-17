@@ -183,6 +183,11 @@
   background: linear-gradient(135deg, #eff6ff 0%, white 100%);
 }
 
+.analytics-card.requests-card {
+  border-color: #bbf7d0;
+  background: linear-gradient(135deg, #f0fdf4 0%, white 100%);
+}
+
 .ranked-list {
   display: flex;
   flex-direction: column;
