@@ -129,3 +129,6 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Business strategies
+business/

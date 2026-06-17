@@ -1,0 +1,63 @@
+/* Sample-data banner + small tweaks for the public /demo page.
+   Reuses operator.css for the dashboard styling itself. */
+
+.demo-banner {
+  max-width: 1200px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.1rem;
+  background: linear-gradient(135deg, #fef3c7, #fffbeb);
+  border: 1.5px solid #fcd34d;
+  border-radius: 12px;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.demo-banner-icon { font-size: 1.25rem; line-height: 1; }
+
+.demo-banner-text {
+  font-size: 0.85rem;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.demo-banner-text strong { font-weight: 700; }
+
+.demo-lede {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #334155;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.demo-lede em { font-style: italic; }
+.demo-lede strong { color: #001d4a; font-weight: 700; }
+
+.demo-note {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: -0.5rem 0 1.5rem;
+  line-height: 1.45;
+}
+
+.demo-print-btn {
+  padding: 0.5rem 1.25rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Quicksand', sans-serif;
+}
+.demo-print-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+
+@media print {
+  .no-print { display: none !important; }
+  .demo-banner { break-inside: avoid; }
+}

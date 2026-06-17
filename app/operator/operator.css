@@ -306,7 +306,52 @@
 .funnel-rate-value { font-size: 1.6rem; font-weight: 700; color: #00539B; line-height: 1; }
 .funnel-rate-label { font-size: 0.72rem; color: #64748b; font-weight: 600; margin-top: 4px; }
 
+/* Item drill-down card */
+.item-dd-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.item-select {
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #1e293b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Quicksand', sans-serif;
+  cursor: pointer;
+  min-width: 220px;
+}
+.item-select:focus { outline: none; border-color: #00539B; }
+.item-stat-row {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 0.5rem;
+}
+.item-stat { font-size: 0.85rem; color: #64748b; }
+.item-stat strong { color: #001d4a; font-weight: 700; }
+.item-stat.alert strong { color: #d97706; }
+.item-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+  margin-top: 1rem;
+}
+.item-detail-grid h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #001d4a;
+  margin: 0 0 0.85rem;
+}
+
 @media (max-width: 768px) {
+  .item-detail-grid { grid-template-columns: 1fr; }
+
   .operator-header {
     flex-direction: column;
   }

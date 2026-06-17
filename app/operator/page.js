@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { vendingMachines } from '../../src/data/vendingMachines';
 import { computeDemandReport } from '../../lib/demandReport';
 import { pct, hourLabel } from '../../lib/chartUtils';
+import ItemDrilldownCard from '../../src/components/ItemDrilldownCard';
 import './operator.css';
 
 const PERIODS = [
@@ -132,6 +133,8 @@ export default function OperatorDashboard() {
                 </div>
               </div>
             </div>
+
+            <ItemDrilldownCard items={report.itemBreakdowns} />
 
             <div className="analytics-card callout span-2">
               <h2>Recommended Actions</h2>
