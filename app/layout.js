@@ -1,4 +1,5 @@
 import './globals.css';
+import Footer from '../src/components/Footer';
 
 export const metadata = {
   title: 'Munchr — Duke Campus Vending',
@@ -44,6 +45,7 @@ export default function RootLayout({ children }) {
             </div>
           </div>
           {children}
+          <Footer />
         </div>
       </body>
     </html>

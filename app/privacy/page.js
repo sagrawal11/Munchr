@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Privacy — Munchr',
-  description: 'How Munchr handles data: anonymous by design, no personal information.',
+  description: 'How Munchr handles your data: anonymous by design, no personal information, no tracking.',
 };
 
 const wrap = { maxWidth: 760, margin: '0 auto', padding: '2rem 1.25rem', fontFamily: "'Quicksand', sans-serif", color: '#1e293b', lineHeight: 1.6 };
@@ -15,15 +15,18 @@ export default function PrivacyPage() {
       <p style={muted}>Last updated: June 2026</p>
 
       <p style={{ marginTop: '1.25rem' }}>
-        Munchr is <strong>anonymous by design</strong>. The student app does not require an account and
-        does not collect your name, email, phone number, or student ID.
+        Munchr is <strong>anonymous by design</strong>. There is no account and no login. We do not ask for, collect,
+        or store your name, email, phone number, or student ID — and we have <strong>no way to identify you</strong>.
+        Because we never collect anything that could point back to a person, nothing we record can be tied to you.
       </p>
 
-      <h2 style={h2}>What we collect</h2>
+      <h2 style={h2}>The little we do record (all anonymous)</h2>
       <ul>
-        <li>An <strong>anonymous session id</strong> (a random value stored in your browser for the visit) — not linked to your identity.</li>
-        <li>Which products and machines you <strong>search for and tap</strong>, and whether a search found results.</li>
-        <li><strong>Approximate context</strong> — the campus and building associated with a result, your device type (mobile/desktop).</li>
+        <li>A <strong>random session tag</strong> created fresh in your browser — it exists only for your current
+          visit and is discarded the moment you close the tab. It&apos;s not a profile, not an account, and isn&apos;t
+          linked to your identity, your device, or anything else.</li>
+        <li>Which products and machines are <strong>searched for and tapped</strong>, and whether a search found results.</li>
+        <li><strong>Approximate context</strong> — the campus and building associated with a result, and device type (mobile/desktop). No precise location, ever.</li>
       </ul>
 
       <h2 style={h2}>Location</h2>
@@ -36,9 +39,9 @@ export default function PrivacyPage() {
 
       <h2 style={h2}>Why we collect it</h2>
       <p>
-        Aggregated, anonymous demand data (what students look for, where, and when) helps vending operators
-        stock the right products in the right places — fewer empty machines and missing items. Insights are
-        reported in aggregate; they are never tied to an individual.
+        Knowing what students look for — and when a search comes up empty — helps the people who stock the machines
+        bring in the right products in the right places, so you find what you want more often. These insights are
+        only ever looked at in aggregate; they are never tied to you as an individual.
       </p>
 
       <h2 style={h2}>What we don&apos;t do</h2>
@@ -48,15 +51,20 @@ export default function PrivacyPage() {
         <li>No personal accounts or identifiers for students.</li>
       </ul>
 
-      <h2 style={h2}>Operator accounts</h2>
-      <p style={muted}>
-        Vending operators use separate, authenticated accounts to view aggregate analytics. Operator
-        access is restricted and protected by row-level security.
+      <h2 style={h2}>Is my data safe?</h2>
+      <p>
+        Yes — and the strongest protection is that there&apos;s almost nothing to protect. Because Munchr never collects
+        personal information and has no way to identify you, there is no profile, no account, and nothing about
+        <em> who you are</em> for anyone to lose, leak, or misuse. The connection to Munchr is encrypted (HTTPS), and
+        the limited anonymous activity above is stored with trusted U.S. hosting providers (Supabase and Vercel). We
+        never sell data to anyone, and we never share it with anyone who could tie it to a person — because we
+        couldn&apos;t either.
       </p>
 
-      <h2 style={h2}>Contact</h2>
+      <h2 style={h2}>Retention &amp; your choices</h2>
       <p style={muted}>
-        Questions or requests about privacy? Email <a href="mailto:sarthak@atp-data.com">sarthak@atp-data.com</a>.
+        Anonymous interaction events are retained on a rolling basis to power demand trends. Questions or requests
+        about privacy? Email <a href="mailto:privacy@munchr.app">privacy@munchr.app</a>.
       </p>
     </div>
   );

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { parseCsv, buildCatalogFromCsv, guessMapping, CSV_FIELDS } from '../../../lib/integrations/csv';
 import { commitCatalog } from '../../../lib/integrations/commit';
+import { getOperatorOrgId, logAudit } from '../../../lib/org';
 import '../operator.css';
 import './integrations.css';
 
@@ -79,10 +80,15 @@ export default function IntegrationsPage() {
   const onCommit = async () => {
     if (!catalog) return;
     setCommitting(true); setMsg(null);
-    const res = await commitCatalog(supabase, catalog);
+    // Stamp the operator's org on imported rows once multi-tenancy is live (null pre-cutover → unchanged).
+    const orgId = await getOperatorOrgId(supabase);
+    const res = await commitCatalog(supabase, catalog, orgId);
     setCommitting(false);
     if (res.error) flash('error', `Import failed: ${res.error.message}`);
-    else flash('success', `Imported ✓ — ${res.applied.machines} new machines, ${res.applied.inventory} inventory rows, ${res.applied.sales} sales.`);
+    else {
+      logAudit(supabase, 'integration.import', provider, res.applied);
+      flash('success', `Imported ✓ — ${res.applied.machines} new machines, ${res.applied.inventory} inventory rows, ${res.applied.sales} sales.`);
+    }
   };
 
   return (

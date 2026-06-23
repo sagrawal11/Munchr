@@ -1,5 +1,6 @@
 import { createServerClient } from '../../../lib/supabase';
 import { rateLimit, clientIp } from '../../../lib/rateLimit';
+import { defaultOrgId } from '../../../lib/org';
 
 // Per-IP cap on the anonymous tracking endpoint. Comfortable for a very active student
 // (a search fires 1–2 events) while blocking automated spam. Best-effort per-instance;
@@ -57,7 +58,7 @@ export async function POST(request) {
     const result_count = Number.isInteger(rc) && rc >= 0 && rc <= 100000 ? rc : null;
 
     const supabase = createServerClient();
-    const { error } = await supabase.from('analytics_events').insert({
+    const row = {
       event_type,
       session_id: str(session_id, MAX.session_id),
       query: str(body.query, MAX.query),
@@ -69,7 +70,12 @@ export async function POST(request) {
       result_count,
       device_type: str(body.device_type, MAX.device_type),
       timestamp: new Date().toISOString(),
-    });
+    };
+    // Multi-tenant: stamp the deployment's org once cutover is enabled (MUNCHR_ORG_ID set).
+    // Omitted entirely when unset, so this is a no-op pre-migration.
+    const orgId = defaultOrgId();
+    if (orgId != null) row.org_id = orgId;
+    const { error } = await supabase.from('analytics_events').insert(row);
 
     if (error) {
       console.error('Supabase insert error:', error);

@@ -11,6 +11,7 @@ import {
   addProductToMachine,
   nextMachineId,
 } from '../../../lib/catalogAdmin';
+import { getOperatorOrgId, logAudit } from '../../../lib/org';
 import '../operator.css';
 import './inventory.css';
 
@@ -25,19 +26,25 @@ export default function InventoryEditor() {
   const [selectedId, setSelectedId] = useState(null);
   const [msg, setMsg] = useState(null);
   const [creating, setCreating] = useState(false);
+  // Operator's org (null until the multi-tenancy migration adds the current_org_ids RPC).
+  const [orgId, setOrgId] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) router.replace('/operator/login');
-      else { setSession(session); setLoading(false); }
+      if (!session) { router.replace('/operator/login'); return; }
+      setSession(session); setLoading(false);
+      getOperatorOrgId(supabase).then(setOrgId);
     });
   }, [router]);
 
   const reload = useCallback(async () => {
-    const { data, error } = await supabase
+    // Scope the machine list to the operator's org once multi-tenancy is live (no filter pre-cutover).
+    let query = supabase
       .from('machines')
       .select('id,name,building,floor,notes,latitude,longitude,credit_card_only,status, machine_inventory(id, available, products(id,name,label))')
       .order('id');
+    if (orgId != null) query = query.eq('org_id', orgId);
+    const { data, error } = await query;
     if (error) { setMsg({ type: 'error', text: `Load failed: ${error.message}` }); return; }
     const mapped = (data || []).map(m => ({
       ...m,
@@ -49,7 +56,7 @@ export default function InventoryEditor() {
     setMachines(mapped);
     const names = await supabase.from('products').select('name').order('name');
     if (names.data) setProductNames(names.data.map(p => p.name));
-  }, []);
+  }, [orgId]);
 
   useEffect(() => { if (session) reload(); }, [session, reload]);
 
@@ -103,8 +110,10 @@ export default function InventoryEditor() {
                   notes: fields.notes || null, latitude: Number(fields.latitude), longitude: Number(fields.longitude),
                   credit_card_only: fields.credit_card_only, status: fields.status,
                 };
+                if (orgId != null) payload.org_id = orgId; // stamp org once multi-tenancy is live
                 const { error } = await addMachine(supabase, payload);
                 if (error) { flash('error', `Create failed: ${error.message}`); return; }
+                logAudit(supabase, 'catalog.machine.create', String(id), { name: fields.name });
                 await reload(); setCreating(false); setSelectedId(id); flash('success', `Created "${fields.name}"`);
               }}
             />
@@ -116,22 +125,26 @@ export default function InventoryEditor() {
               onSaveFields={async fields => {
                 const { error } = await updateMachine(supabase, selected.id, fields);
                 if (error) { flash('error', `Save failed: ${error.message}`); return; }
+                logAudit(supabase, 'catalog.machine.update', String(selected.id), { name: fields.name });
                 await reload(); flash('success', 'Machine details saved');
               }}
               onToggle={async item => {
                 // currently-available (available !== false) → flip to unavailable, and vice-versa
                 const { error } = await setProductAvailability(supabase, item.invId, item.available === false);
                 if (error) { flash('error', `Update failed: ${error.message}`); return; }
+                logAudit(supabase, 'catalog.inventory.toggle', String(item.invId), { product: item.name, available: item.available === false });
                 await reload();
               }}
               onRemove={async item => {
                 const { error } = await removeInventoryItem(supabase, item.invId);
                 if (error) { flash('error', `Remove failed: ${error.message}`); return; }
+                logAudit(supabase, 'catalog.inventory.remove', String(item.invId), { product: item.name });
                 await reload(); flash('success', `Removed ${item.name}`);
               }}
               onAdd={async name => {
-                const { error } = await addProductToMachine(supabase, selected.id, name);
+                const { error } = await addProductToMachine(supabase, selected.id, name, orgId);
                 if (error) { flash('error', `Add failed: ${error.message}`); return; }
+                logAudit(supabase, 'catalog.inventory.add', String(selected.id), { product: name });
                 await reload(); flash('success', `Added ${name}`);
               }}
             />
